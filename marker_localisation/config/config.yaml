@@ -1,0 +1,10 @@
+marker_localisation:
+  detector_offset: [0.05, 0, 0, rad(-pi/2), 0, rad(-pi/2)]
+  markers:
+    # orientation help (markers facing origin, standing upright):
+    # - front: -pi/2, 0, pi
+    # - left: pi, pi, 0
+    # - back: pi/2, 0, pi
+    # - right: 0, pi, 0
+    aruco_marker_0: [0, 2.30, 0.68, rad(pi), rad(pi), 0]
+    aruco_marker_1: [0, -0.5, 0.3, rad(pi), rad(pi), 0]

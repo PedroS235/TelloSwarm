@@ -1,0 +1,24 @@
+<launch>
+    <!-- frames -->
+    <arg name="world" default="world"/>
+    <arg name="marker_base_name" default="aruco_marker_"/>
+    <arg name="estimated_marker_base_name" default="est_aruco_marker_"/>
+    <arg name="detector" default="aruco_detector"/>
+    <arg name="robot" default="drone"/>
+    
+    <arg name="pi" value="3.141592653589793"/>
+    <arg name="detector_offset" default="$(eval ' '.join(map(str, [0.05, 0, 0, -pi/2, 0, -pi/2])))"/>
+
+    <arg name="marker_count" default="1"/>
+
+    <!-- naive estimation: most recent transform will overwrite previous one
+         meaning that seeing several markers at once won't help, and might cause jumps -->
+    <node pkg="tf2_ros" name="detector_offset" type="static_transform_publisher"
+        args="$(arg detector_offset) $(arg robot) $(arg detector)"/>
+    <node if="$(eval marker_count > 0)" pkg="marker_localisation" name="$(arg robot)_in_$(arg world)_via_$(arg estimated_marker_base_name)0" type="single_marker_transform.py"
+        args="-e $(arg estimated_marker_base_name)0 -m $(arg marker_base_name)0 -r $(arg robot) -d $(arg detector) -w $(arg world)"/>
+    <node if="$(eval marker_count > 1)" pkg="marker_localisation" name="$(arg robot)_in_$(arg world)_via_$(arg estimated_marker_base_name)1" type="single_marker_transform.py"
+        args="-e $(arg estimated_marker_base_name)1 -m $(arg marker_base_name)1 -r $(arg robot) -d $(arg detector) -w $(arg world)"/>
+    <node if="$(eval marker_count > 2)" pkg="marker_localisation" name="$(arg robot)_in_$(arg world)_via_$(arg estimated_marker_base_name)2" type="single_marker_transform.py"
+        args="-e $(arg estimated_marker_base_name)2 -m $(arg marker_base_name)2 -r $(arg robot) -d $(arg detector) -w $(arg world)"/>
+</launch>

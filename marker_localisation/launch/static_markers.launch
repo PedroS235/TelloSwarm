@@ -1,0 +1,21 @@
+<launch>
+    <!-- frames -->
+    <arg name="world" default="world"/>
+    <arg name="marker_base_name" default="aruco_marker_"/>
+
+    <arg name="marker_count" default="1"/>
+
+    <arg name="config" default="config.yaml"/>
+
+    <rosparam file="$(find marker_localisation)/config/$(arg config)"/>
+
+    <!-- static marker transforms -->
+    <!-- TODO: refactor (single node/at least correct name) -->
+    <node if="$(eval marker_count > 0)" pkg="marker_localisation" name="$(arg marker_base_name)0_in_$(arg world)" type="static_transform.sh"
+        args="marker_localisation/markers/$(arg marker_base_name)0 $(arg world) $(arg marker_base_name)0"/>
+    <node if="$(eval marker_count > 1)" pkg="marker_localisation" name="$(arg marker_base_name)1_in_$(arg world)" type="static_transform.sh"
+        args="marker_localisation/markers/$(arg marker_base_name)1 $(arg world) $(arg marker_base_name)1"/>
+    <node if="$(eval marker_count > 2)" pkg="marker_localisation" name="$(arg marker_base_name)2_in_$(arg world)" type="static_transform.sh"
+        args="marker_localisation/markers/$(arg marker_base_name)2 $(arg world) $(arg marker_base_name)2"/>
+
+</launch>

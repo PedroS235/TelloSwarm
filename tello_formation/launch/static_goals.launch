@@ -1,0 +1,22 @@
+<launch>
+    <arg name="world" default="world"/>
+    <arg name="goal_base_name" default="goal_"/>
+    <arg name="goal_count" default="3"/>
+
+    <arg name="pi" value="3.141592653589793"/>
+
+    <!-- Pass goal pose in world as "x y z yaw pitch roll" -->
+    <arg name="goal_0" default="$(eval ' '.join(map(str, [-1.8, 1.4, 0, 0, 0, 0])))"/>
+    <arg name="goal_1" default="$(eval ' '.join(map(str, [0.85, -1.42, 0, 0, 0, 0])))"/>
+    <arg name="goal_2" default="$(eval ' '.join(map(str, [0, -1.42, 0, 0, 0, 0])))"/>
+    <arg name="goal_3" default="$(eval ' '.join(map(str, [0, 0, 0, 0, 0, 0])))"/>
+
+    <node if="$(eval goal_count > 0)" pkg="tf2_ros" name="$(arg goal_base_name)0_static" type="static_transform_publisher"
+        args="$(arg goal_0) $(arg world) $(arg goal_base_name)0"/>
+    <node if="$(eval goal_count > 1)" pkg="tf2_ros" name="$(arg goal_base_name)1_static" type="static_transform_publisher"
+        args="$(arg goal_1) $(arg world) $(arg goal_base_name)1"/>
+    <node if="$(eval goal_count > 2)" pkg="tf2_ros" name="$(arg goal_base_name)2_static" type="static_transform_publisher"
+        args="$(arg goal_2) $(arg world) $(arg goal_base_name)2"/>
+    <node if="$(eval goal_count > 3)" pkg="tf2_ros" name="$(arg goal_base_name)3_static" type="static_transform_publisher"
+        args="$(arg goal_3) $(arg world) $(arg goal_base_name)3"/>
+</launch>
