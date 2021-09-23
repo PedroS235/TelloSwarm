@@ -56,11 +56,11 @@ class TelloController:
             self.do(f'speed {speed}')
             rospy.sleep(2)
             self.do(f'{turn} {angle}')
-            rospy.sleep((math.radians(angle)*0.1/speed)+2) #compute the distance of the rotation
+            rospy.sleep((math.radians(angle)*0.1/speed)+2) #compute the time it takes to rotate
             self.do(f'forward {distance}')
             rospy.sleep(distance / speed + 2)  # +2 to be safe
             self.do(f'land')
-            rospy.loginfo('Succeed to land on the goal')
+            rospy.loginfo(f'Tello_{id} succeeded to land on the goal')
             rospy.shutdwon()
 
     def _search_marker(self):

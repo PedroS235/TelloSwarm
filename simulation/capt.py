@@ -94,16 +94,16 @@ class CAPTSolver:
 
     self.goals.append(pos)
 
-def clear(self):
-    """
-      This method restarts all the values. Acts like a RESET
-    """
-    self.starts = []
-    self.goals = []
-    self.assignment = None
-    self.start_time = None
-    self.end_time = None
-    self.trajectory = None
+  def clear(self):
+      """
+        This method restarts all the values. Acts like a RESET
+      """
+      self.starts = []
+      self.goals = []
+      self.assignment = None
+      self.start_time = None
+      self.end_time = None
+      self.trajectory = None
 
   def assigned(self, i):
     """
@@ -115,7 +115,7 @@ def clear(self):
       return self.starts[i]
     return self.goals[self.assignment[i]]
 
-def compute_trajectories(self, t0):
+  def compute_trajectories(self, t0):
     """
       This method is the algorithm to compute the trajectories
     """
