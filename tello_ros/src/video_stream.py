@@ -71,7 +71,7 @@ def publish(client, id, verbose=False, rate=30):
     publisher = rospy.Publisher("camera/image_raw", Image, queue_size=2)
     rospy.init_node('tello_video')
     rospy.loginfo("Started tello_video node")
-    rospy.wait_for_service('command')  # wait for streamon
+    #rospy.('command')  # wait for streamon
     rate = rospy.Rate(RATE)
     client.start()
     while not rospy.is_shutdown():

@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "/usr/include/opencv4",
                 "/opt/ros",
-                "/opt/ros/noetic/include"
+                "/opt/ros/noetic/include",
+                "/usr/local/include/ucoslam"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

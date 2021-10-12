@@ -116,7 +116,7 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -134,8 +134,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(camera_subscriber src/camera_subscriber.cpp)
-add_executable(image_converter src/image_converter.cpp)
-add_executable(main src/main)
+add_executable(slam_node src/slam_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -146,17 +145,13 @@ add_executable(main src/main)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(camera_subscriber ${camera_subscriber_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(image_converter ${image_converter_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(main ${main_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(slam_node ${slam_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(camera_subscriber
   ${catkin_LIBRARIES}
 )
-target_link_libraries(image_converter
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(main
+target_link_libraries(slam_node
   ${catkin_LIBRARIES}
 )
 
