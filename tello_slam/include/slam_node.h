@@ -61,6 +61,7 @@ public:
             else std::cerr << "Frame " << framecounter << "pose " << posef2g << std::endl;
 
             keyPressed = mapViewer.show(map, currFrame, posef2g);
+            return;
         } 
     }
 
