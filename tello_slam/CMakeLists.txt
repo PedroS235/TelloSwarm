@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   genmsg
   cv_bridge
   image_transport
+  sensor_msgs
 )
 
 include_directories(${catkin_INCLUDE_DIRS})
