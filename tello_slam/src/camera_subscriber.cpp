@@ -5,7 +5,6 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
-#include <slam_node.h>
 
 class ImageSubsciber{
 private:
@@ -14,13 +13,23 @@ private:
     image_transport::Subscriber image_sub;
 
 private:
-    SlamNode sn;
+    ucoslam::UcoSlam slam;
+    ucoslam::Params ucoslamParams;
+    ucoslam::ImageParams cameraParams;
+    ucoslam::MapViewer mapViewer;
+    std::shared_ptr<ucoslam::Map> map = std::make_shared<ucoslam::Map>();
+
 private:
     int frameCounter;
 
 public:
     ImageSubsciber(char **args) : it(nh){
         frameCounter = 1;
+        cameraParams.readFromXMLFile(args[1]);
+        ucoslamParams.runSequential = true;
+        ucoslamParams.detectMarkers = false;
+        slam.setParams(map, ucoslamParams, args[2]);
+
         image_sub = it.subscribe("/camera/image_raw", 1, &ImageSubsciber::imageCallBack, this);
     }
 
@@ -41,7 +50,12 @@ public:
             return;
         }
         cv::Mat currFrame = cvImage->image; 
-        sn.passTheCurrentFrame(currFrame, frameCounter);
+        cv::Mat posef2g = slam.process(currFrame, cameraParams, frameCounter);
+        
+        if(posef2g.empty()) std::cerr << "Frame " << frameCounter << "pose not found" << std::endl;
+        else std::cerr << "Frame " << frameCounter << "pose " << posef2g << std::endl;
+
+        mapViewer.show(map, currFrame, posef2g);
         frameCounter++;
     }
 

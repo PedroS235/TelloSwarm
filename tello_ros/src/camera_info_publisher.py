@@ -1,41 +1,41 @@
 #!/usr/bin/python3
 
-
 import rospy
 from sensor_msgs.msg import CameraInfo
+import yaml
+import argparse
 
-from datetime import datetime
-
-def publisher():
+def publisher(camera_info):
     """
-        This method contains the information to calibrate the tello camera
+        This is a publisher that will publish the camera parameters of the camera
     """
-    print("Starting calibrator node")
-    publisher = rospy.Publisher("camera/camera_info", CameraInfo, queue_size=10)
-    rospy.init_node("calibrator")
+    rospy.loginfo("Initiating the camera calibrator node ...")
+    publisher_node = rospy.Publisher("camera/camera_info", CameraInfo, queue_size=10)
+    rospy.init_node("camera_calibrator")
+    rospy.loginfo("Camera calibrator node successfully launched")
     rate = rospy.Rate(15)
-    fixed_msg = CameraInfo(
-        height=960,
-        width=720,
-        distortion_model="plumb_bob",
-        D=[-0.013335, -0.018951, 0.000913, -0.005454, 0.000000],
-        K=[
-            897.137424, 0.000000, 453.939111,
-            0.000000, 902.273567, 354.958881,
-            0.000000, 0.000000, 1.000000],
-        R=[1, 0, 0, 0, 1, 0, 0, 0, 1],
-        P=[
-            891.148254, 0.000000, 449.250272, 0.000000,
-            0.000000, 901.238647, 355.367597, 0.000000,
-            0.000000, 0.000000, 1.000000, 0.000000],
-    )
+
     while not rospy.is_shutdown():
-        publisher.publish(fixed_msg)
-        now = datetime.now().time()
-        print(f"{now}: published camera calibration info", end='\r')
+        publisher_node.publish(camera_info)
+        rospy.loginfo("Parameters published")
         rate.sleep()
 
-# -- the rest of the code will be only runned when execured from the terminal
-if __name__ == '__main__':
-    publisher()
 
+def retrieve_data(filename):
+    # Load data from file
+    with open(filename, "r") as file_handle:
+        calib_data = yaml.load(file_handle)
+    # Parse
+    camera_info_msg = CameraInfo()
+    camera_info_msg.width = calib_data["image_width"]
+    camera_info_msg.height = calib_data["image_height"]
+    camera_info_msg.K = calib_data["camera_matrix"]["data"]
+    camera_info_msg.D = calib_data["distortion_coefficients"]["data"]
+    return camera_info_msg
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--file')
+    args = parser.parse_args()
+    camera_info_msg = retrieve_data(args.file)
+    publisher(camera_info_msg)
