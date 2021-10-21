@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>tello_slam</name>
+  <name>tello_slam_ros</name>
   <version>0.0.0</version>
-  <description>The tello_slam package</description>
+  <description>The tello_slam_ros package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(tello_slam)
+project(tello_slam_ros)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -124,9 +124,9 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/tello_slam.cpp
-# )
+#add_library(${PROJECT_NAME}
+#  src/tello_slam_detector.cpp
+#)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -136,8 +136,8 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(camera_subscriber src/camera_subscriber.cpp)
-add_executable(pose_publisher src/pose_publisher.cpp)
+add_executable(tello_slam_detector src/tello_slam_detector.cpp)
+add_executable(tello_slam_detector_node src/tello_slam_detector_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -147,14 +147,14 @@ add_executable(pose_publisher src/pose_publisher.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(camera_subscriber ${camera_subscriber_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(pose_publisher ${pose_publisher_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tello_slam_detector ${tello_slam_detector_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tello_slam_detector_node ${tello_slam_detector_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(camera_subscriber
+target_link_libraries(tello_slam_detector
   ${catkin_LIBRARIES}
 )
-target_link_libraries(pose_publisher
+target_link_libraries(tello_slam_detector_node
   ${catkin_LIBRARIES}
 )
 
