@@ -138,6 +138,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(tello_slam_detector src/tello_slam_detector.cpp)
 add_executable(tello_slam_detector_node src/tello_slam_detector_node.cpp)
+add_executable(pose_publisher src/pose_publisher.cpp)
+add_executable(camera_subscriber src/camera_subscriber.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,12 +151,22 @@ add_executable(tello_slam_detector_node src/tello_slam_detector_node.cpp)
 ## same as for the library above
 add_dependencies(tello_slam_detector ${tello_slam_detector_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(tello_slam_detector_node ${tello_slam_detector_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(pose_publisher ${pose_publisher_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(camera_subscriber ${camera_subscriber_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(tello_slam_detector
   ${catkin_LIBRARIES}
 )
 target_link_libraries(tello_slam_detector_node
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(pose_publisher
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(camera_subscriber
   ${catkin_LIBRARIES}
 )
 

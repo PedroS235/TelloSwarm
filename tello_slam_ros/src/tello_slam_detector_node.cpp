@@ -3,11 +3,11 @@
 
 
 int main(int argc, char **argv){
-    /*TelloSlamRos telloSlamRos(argc, argv);
+    TelloSlamRos telloSlamRos(argc, argv);
     std::cout << "[ROSNODE] starting " << ros::this_node::getName() << std::endl;
 
-    telloSlamRos.open();
-    telloSlamRos.run();*/
+    telloSlamRos.open(argc, argv);
+    telloSlamRos.run();
 
     return 0;
 }
