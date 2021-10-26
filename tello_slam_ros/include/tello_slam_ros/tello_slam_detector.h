@@ -38,6 +38,11 @@ protected:
     std::string worldMapName;
 
 protected:
+    std::string camera_info_topic_name;
+    ros::Subscriber cameraInfoSub;
+    void cameraInfoCallback(const sensor_msgs::CameraInfo &msg);
+
+protected:
     bool runSequential;
     bool detectMarkers;
 

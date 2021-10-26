@@ -30,6 +30,7 @@ int TelloSlamRos::openRos(){
     // - Image subscriber
     // - hard coded
     imageSub = imageTransport -> subscribe("/camera/image_raw", 1, &TelloSlamRos::imageCallback, this);
+    cameraInfoSub = nh.subscribe(camera_info_topic_name, 1, &TelloSlamRos::cameraInfoCallback, this);
     return 0;
 }
 
@@ -41,6 +42,24 @@ int TelloSlamRos::open(int argc, char **argv){
     return 0;
 }
 
+void TelloSlamRos::cameraInfoCallback(const sensor_msgs::CameraInfo &msg){
+    cv::Size camSize(msg.width, msg.height);
+    cv::Mat cameraMatrix(3, 3, CV_32FC1);
+    cv::Mat distortionCoefficients(5, 1, CV_32FC1);
+
+    // - Camera matrix
+    for(int col = 0; col<msg.K.size(); ++col)
+        cameraMatrix.at<float>(col%3, col-(col%3)*3) = msg.K[col];
+    
+    // - Distortion coefficient matrix
+    for(int col = 0; col<msg.K.size(); ++col)
+        distortionCoefficients.at<float>(col, 0) = msg.D[col];
+    ucoslamCameraParams.CamSize = camSize;
+    ucoslamCameraParams.CameraMatrix = cameraMatrix;
+    ucoslamCameraParams.Distorsion = distortionCoefficients;
+    cameraInfoSub.shutdown();
+    std::cout << "Camera calibration parameters received" << std::endl;
+}
 
 void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
     // - Transform image to OpenCV compatible
