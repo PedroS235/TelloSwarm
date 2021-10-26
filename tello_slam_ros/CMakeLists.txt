@@ -71,10 +71,10 @@ link_libraries(${OpenCV_LIBS} ${ucoslam} ${UCOSLAM_REQUIRED_LIBRARIES} ${ucoslam
 # )
 
 ## Generate added messages and services with any dependencies listed here
-generate_messages(
-  DEPENDENCIES
-  std_msgs  # Or other packages containing msgs
-)
+#generate_messages(
+#  DEPENDENCIES
+#  std_msgs  # Or other packages containing msgs
+#)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -123,7 +123,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-## Declare a C++ library
+### Declare a C++ library
 #add_library(${PROJECT_NAME}
 #  src/tello_slam_detector.cpp
 #)
@@ -137,7 +137,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(tello_slam_detector src/tello_slam_detector.cpp)
-add_executable(tello_slam_detector_node src/tello_slam_detector_node.cpp)
+#add_executable(tello_slam_detector_node src/tello_slam_detector_node.cpp)
 add_executable(pose_publisher src/pose_publisher.cpp)
 add_executable(camera_subscriber src/camera_subscriber.cpp)
 
@@ -150,15 +150,12 @@ add_executable(camera_subscriber src/camera_subscriber.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(tello_slam_detector ${tello_slam_detector_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(tello_slam_detector_node ${tello_slam_detector_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(tello_slam_detector_node ${tello_slam_detector_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(pose_publisher ${pose_publisher_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(camera_subscriber ${camera_subscriber_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(tello_slam_detector
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(tello_slam_detector_node
   ${catkin_LIBRARIES}
 )
 
