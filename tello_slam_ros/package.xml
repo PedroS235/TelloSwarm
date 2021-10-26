@@ -49,22 +49,15 @@
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>cv_bridge</build_depend>
-  <build_depend>opencv2</build_depend>
-  <build_depend>image_transport</build_depend>
-  <build_export_depend>roscpp</build_export_depend>
-  <build_export_depend>rospy</build_export_depend>
-  <build_export_depend>cv_bridge</build_export_depend>
-  <build_export_depend>opencv2</build_export_depend>
-  <build_export_depend>image_transport</build_export_depend>
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>cv_bridge</exec_depend>
-  <exec_depend>opencv2</exec_depend>
-  <exec_depend>image_transport</exec_depend>
-
+    <depend>roscpp</depend>
+    <depend>message_filters</depend>
+    <depend>image_transport</depend>
+    <depend>cv_bridge</depend>
+    <depend>geometry_msgs</depend>
+    <depend>tf2</depend>
+    <depend>tf2_geometry_msgs</depend>
+    <depend>tf2_ros</depend>
+    <depend>perception_msgs</depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>
