@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(tello_slam_ros)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-# add_compile_options(-std=c++11)
+set(TELLO_SLAM_ROS_SOURCE_DIR src)
+set(TELLO_SLAM_ROS_INCLUDE_DIR include)
+set(TELLO_SLAM_ROS_SOURCE_FILES 
+  ${TELLO_SLAM_ROS_SOURCE_DIR}/tello_slam_detector.cpp)
+set(TELLO_SLAM_ROS_HEADER_FILES
+  ${TELLO_SLAM_ROS_INCLUDE_DIR}/tello_slam_ros/tello_slam_detector.h
+)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
@@ -17,94 +22,37 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
 )
 
-include_directories(${catkin_INCLUDE_DIRS})
-## System dependencies are found with CMake's conventions
-find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV REQUIRED)
 find_package(ucoslam REQUIRED)
-link_libraries(${OpenCV_LIBS} ${ucoslam} ${UCOSLAM_REQUIRED_LIBRARIES} ${ucoslam_LIBS})
-
-################################################
-## Declare ROS messages, services and actions ##
-################################################
-
-## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
-
-## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
-
-## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
-
-## Generate added messages and services with any dependencies listed here
-#generate_messages(
-#  DEPENDENCIES
-#  std_msgs  # Or other packages containing msgs
-#)
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES tello_slam
-#  CATKIN_DEPENDS roscpp rospy
-#  DEPENDS system_lib
+  INCLUDE_DIRS ${TELLO_SLAM_ROS_INCLUDE_DIR} 
+  LIBRARIES ${PROJECT_NAME} 
+  CATKIN_DEPENDS roscpp message_filters image_transport cv_bridge geometry_msgs tf2 tf2_geometry_msgs tf2_ros perception_msgs
+  DEPENDS OpenCV 
 )
 
-###########
-## Build ##
-###########
+include_directories(${catkin_INCLUDE_DIRS})
+include_directories(${TELLO_SLAM_ROS_INCLUDE_DIR})
+include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${ucoslam_INCLUDE_DIRS})
 
-## Specify additional locations of header files
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-)
+add_library(${PROJECT_NAME} ${TELLO_SLAM_ROS_SOURCE_FILES} ${TELLO_SLAM_ROS_HEADER_FILES})
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
-### Declare a C++ library
-#add_library(${PROJECT_NAME}
-#  src/tello_slam_detector.cpp
-#)
 
-## Add cmake target dependencies of the library
-## as an example, code may need to be generated before libraries
-## either from message generation or dynamic reconfigure
-# add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_executable(${PROJECT_NAME}_detector ${TELLO_SLAM_ROS_SOURCE_DIR}/tello_slam_detector_node.cpp)
+add_dependencies(${PROJECT_NAME}_detector ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${PROJECT_NAME}_detector ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME}_detector ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME}_detector ${ucoslam_LIBS})
+target_link_libraries(${PROJECT_NAME}_detector ${catkin_LIBRARIES})
 
-## Declare a C++ executable
-## With catkin_make all packages are built within a single CMake context
-## The recommended prefix ensures that target names across packages don't collide
-add_executable(tello_slam_detector src/tello_slam_detector.cpp)
-#add_executable(tello_slam_detector_node src/tello_slam_detector_node.cpp)
-add_executable(pose_publisher src/pose_publisher.cpp)
-add_executable(camera_subscriber src/camera_subscriber.cpp)
 
-## Add cmake target dependencies of the executable
-## same as for the library above
-add_dependencies(tello_slam_detector ${tello_slam_detector_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_dependencies(tello_slam_detector_node ${tello_slam_detector_node_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(pose_publisher ${pose_publisher_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(camera_subscriber ${camera_subscriber_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-## Specify libraries to link a library or executable target against
-target_link_libraries(tello_slam_detector
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(pose_publisher
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(camera_subscriber
-  ${catkin_LIBRARIES}
-)
+#add_executable(${PROJECT_NAME}_display ${ARUCO_ROS_SOURCE_DIR}/aruco_eye_ros_display_node.cpp)
+#add_dependencies(${PROJECT_NAME}_display ${catkin_EXPORTED_TARGETS})
+#target_link_libraries(${PROJECT_NAME}_display ${PROJECT_NAME})
+#target_link_libraries(${PROJECT_NAME}_display ${OpenCV_LIBS})
+#target_link_libraries(${PROJECT_NAME}_display ${catkin_LIBRARIES})
