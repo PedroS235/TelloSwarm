@@ -11,6 +11,7 @@ private:
     ros::NodeHandle nh;    
     image_transport::ImageTransport it;
     image_transport::Subscriber image_sub;
+    image_transport::Publisher image_pub;
 
 private:
     ucoslam::UcoSlam slam;
@@ -31,7 +32,13 @@ public:
         slam.setParams(map, ucoslamParams, args[2]);
 
         image_sub = it.subscribe("/camera/image_raw", 1, &ImageSubsciber::imageCallBack, this);
+        image_pub = it.advertise("/image_converter/output_video", 1);
+        cv::namedWindow("window");
     }
+    ~ImageSubsciber(){
+        cv::destroyAllWindows();
+    }
+    
 
     /*
         TODO:
@@ -52,10 +59,8 @@ public:
         cv::Mat currFrame = cvImage->image; 
         cv::Mat posef2g = slam.process(currFrame, cameraParams, frameCounter);
         
-        if(posef2g.empty()) std::cerr << "Frame " << frameCounter << "pose not found" << std::endl;
-        else std::cerr << "Frame " << frameCounter << "pose " << posef2g << std::endl;
-
-        mapViewer.show(map, currFrame, posef2g);
+        //sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", currFrame).toImageMsg();
+        image_pub.publish(cvImage->toImageMsg());
         frameCounter++;
     }
 
