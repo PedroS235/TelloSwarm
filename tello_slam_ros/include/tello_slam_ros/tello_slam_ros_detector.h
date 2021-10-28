@@ -3,7 +3,6 @@
 
 // - Ucoslam
 #include <ucoslam/ucoslam.h>
-#include <ucoslam/mapviewer.h>
 
 // - ROS
 #include <ros/ros.h>
@@ -22,7 +21,8 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <tf2/LinearMath/Transform.h>
 
-class TelloSlamDisplayRos{
+
+class TelloSlamRos{
 private:
     ucoslam::UcoSlam ucoslam;
     ucoslam::Params ucoslamParams;
@@ -67,16 +67,10 @@ protected:
     tf2_ros::TransformBroadcaster* tfTransformBroadcaster;
     geometry_msgs::Transform cameraPose2Tf();
 
-// - Images output
-protected:
-    std::string outputImageTopicName;
-    cv::Mat outputImageMat;
-    image_transport::Publisher outputImagePub;
-
 // - Constructors
 public:
-    TelloSlamDisplayRos(int argc, char **argv);
-    ~TelloSlamDisplayRos();
+    TelloSlamRos(int argc, char **argv);
+    ~TelloSlamRos();
 
 public:
     int open(int argc, char **argv);
