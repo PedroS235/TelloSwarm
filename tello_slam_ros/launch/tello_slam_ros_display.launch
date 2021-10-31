@@ -1,6 +1,6 @@
 <launch>
     <arg name="tello_slam_display_node_name" default="tello_slam_display_node"/>
-    <arg name="flag_display_output_image" default="True"/>
+    <arg name="showDisplay" default="True"/>
     <arg name="display_output_image_window_name" default="tello_slam_display_window"/>
 
     <arg name="camera_image_topic_name" default="camera/camera_info"/>
@@ -8,10 +8,26 @@
     <arg name="image_topic_name" default="camera/image_raw"/>
     <arg name="output_image_topic_name" default="tello_slam/tello_slam_observation_image/image_raw" />
 
-    <node name="$(arg tello_slam_display_node_name)" pkg="tello_slam_ros" type="tello_slam_display" output="screen">
-        <!-- <param name="display_output_image_window_name" value="$(arg display_output_window_name)" type="string"/> -->
+    <arg name="runSequential" default="True"/>
+    <arg name="detectMarkers" default="True"/>
+
+    <arg name="cameraCalibrationName" default=""/>
+    <arg name="vocabularyFileName" default="/home/pedros/ucoslam/3rdparty/vocabularies/orb.fbow"/>
+    <arg name="worldMapName" default="world.map"/>
+
+    <node name="$(arg tello_slam_display_node_name)" pkg="tello_slam_ros" type="tello_slam_ros_display" output="screen">
+        <param name="showDisplay" value="$(arg showDisplay)" type="Boolean" />
+
         <param name="image_topic_name" value="$(arg image_topic_name)" type="string"/>
         <param name="output_image_topic_name" value="$(arg output_image_topic_name)" type="string" />
         <param name="camera_image_topic_name" value="$(arg camera_image_topic_name)" type="string" />
+
+        <param name="runSequntial" value="$(arg runSequential)" type="Boolean" />
+        <param name="detectMarkers" value="$(arg detectMarkers)" type="Boolean" />
+
+        <param name="cameraCalibrationName" value="$(arg cameraCalibrationName)" type="string" />
+        <param name="vocabularyFileName" value="$(arg vocabularyFileName)" type="string" />
+        <param name="worldMapName" value="$(arg worldMapName)" type="string" />
+
     </node>
 </launch>

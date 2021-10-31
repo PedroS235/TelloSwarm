@@ -46,6 +46,7 @@ protected:
 protected:
     bool runSequential;
     bool detectMarkers;
+    bool cameraInfoReceived = false;
 
 // - Images received
 protected:
@@ -73,12 +74,15 @@ public:
     ~TelloSlamRos();
 
 public:
-    int open(int argc, char **argv);
+    int open();
     int run();
     void close();
     void saveMapFile();
 
 public:
     int openRos();
-    void configureUcoslam(int argc, char **argv);
+    void configureUcoslam();
+
+protected:
+    void readParameters();
 };

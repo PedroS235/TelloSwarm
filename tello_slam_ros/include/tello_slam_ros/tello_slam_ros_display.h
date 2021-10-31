@@ -27,6 +27,7 @@ private:
     ucoslam::UcoSlam ucoslam;
     ucoslam::Params ucoslamParams;
     ucoslam::ImageParams ucoslamCameraParams;
+    ucoslam::MapViewer mapViewer;
 
 // - Ucoslam map
 protected:
@@ -46,6 +47,8 @@ protected:
 protected:
     bool runSequential;
     bool detectMarkers;
+    bool showDisplay;
+    bool cameraInfoReceived = false;
 
 // - Images received
 protected:
@@ -73,12 +76,14 @@ public:
     ~TelloSlamDisplayRos();
 
 public:
-    int open(int argc, char **argv);
+    int open();
     int run();
     void close();
     void saveMapFile();
 
 public:
     int openRos();
-    void configureUcoslam(int argc, char **argv);
+    void configureUcoslam();
+private:
+    void readParameters();
 };
