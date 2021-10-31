@@ -24,7 +24,7 @@ def publisher(camera_info):
 def retrieve_data(filename):
     # Load data from file
     with open(filename, "r") as file_handle:
-        calib_data = yaml.load(file_handle)
+        calib_data = yaml.safe_load(file_handle)
     # Parse
     camera_info_msg = CameraInfo()
     camera_info_msg.width = calib_data["image_width"]
@@ -35,7 +35,7 @@ def retrieve_data(filename):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', '--file')
-    args = parser.parse_args()
+    parser.add_argument('-f', '--file', required=True, type=str)
+    args, unknown = parser.parse_known_args()
     camera_info_msg = retrieve_data(args.file)
     publisher(camera_info_msg)

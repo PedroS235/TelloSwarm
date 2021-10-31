@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 import rospy
-from sensor_msgs import CameraInfo
+from sensor_msgs.msg import CameraInfo
 import yaml
 import argparse
 

@@ -1,11 +1,7 @@
 #!/usr/bin/python3
 
-import time
 import threading
-import sys
-import traceback
 
-import numpy as np
 import rospy
 import ros_numpy
 import cv2
@@ -86,7 +82,6 @@ def publish(client, id, verbose=False, rate=30):
         rate.sleep()
     client.stop()
 
-# -- the rest of the code will be only runned when execured from the terminal
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser("Publish video stream from Tello drone to /camera/image_raw")
