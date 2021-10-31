@@ -34,12 +34,13 @@ protected:
 
 protected:
     int frameNumber;
-    std::string cameraCalibrationName;
+    std::string cameraCalibrationFileName;
     std::string vocabularyFileName;
-    std::string worldMapName;
+    std::string inputWorldMapFileName;
+    std::string outputWorldMapFileName;
 
 protected:
-    std::string camera_info_topic_name;
+    std::string cameraInfoTopicName;
     ros::Subscriber cameraInfoSub;
     void cameraInfoCallback(const sensor_msgs::CameraInfo &msg);
 
@@ -76,8 +77,9 @@ public:
 public:
     int open();
     int run();
-    void close();
+public:
     void saveMapFile();
+    void loadMapFromFile();
 
 public:
     int openRos();

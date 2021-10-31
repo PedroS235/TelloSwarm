@@ -14,11 +14,6 @@ TelloSlamDisplayRos::TelloSlamDisplayRos(int argc, char **argv){
 
 TelloSlamDisplayRos::~TelloSlamDisplayRos(){
     if(imageTransport) delete imageTransport;
-    close();
-    return;
-}
-
-void TelloSlamDisplayRos::close(){
     return;
 }
 
@@ -28,7 +23,7 @@ int TelloSlamDisplayRos::openRos(){
     // - Image subscriber
     // - hard coded
     imageSub = imageTransport -> subscribe(imageTopicName, 1, &TelloSlamDisplayRos::imageCallback, this);
-    cameraInfoSub = nh.subscribe(camera_info_topic_name, 1, &TelloSlamDisplayRos::cameraInfoCallback, this);
+    cameraInfoSub = nh.subscribe(cameraInfoTopicName, 1, &TelloSlamDisplayRos::cameraInfoCallback, this);
     outputImagePub = imageTransport -> advertise(outputImageTopicName, 1);
     return 0;
 }
@@ -45,38 +40,44 @@ int TelloSlamDisplayRos::open(){
 
 void TelloSlamDisplayRos::readParameters(){
     std::cout << "======================================" << std::endl;
-    std::cout << "[INFO] - Setting parameters" << std::endl;
+    std::cout << "|         Setting parameters         |" << std::endl;
+    std::cout << "======================================" << std::endl;
+
     // - Topic names
     ros::param::param<std::string>("~image_topic_name", imageTopicName, "/camera/image_raw");
     std::cout << " -> Image topic name: " << imageTopicName << std::endl;
 
-    ros::param::param<std::string>("~camera_info_topic_name", camera_info_topic_name, "camera/camera_info");
-    std::cout << " -> Camera infot topic name: " << camera_info_topic_name << std::endl;
+    ros::param::param<std::string>("~camera_info_topic_name", cameraInfoTopicName, "camera/camera_info");
+    std::cout << " -> Camera infot topic name: " << cameraInfoTopicName<< std::endl;
 
     ros::param::param<std::string>("~output_image_topic_name", outputImageTopicName, "tello_slam/tello_slam_observation_image/image_raw");
     std::cout << " -> Outpuc image topic name: " << outputImageTopicName << std::endl;
 
     // - Ucoslam params
-    ros::param::param<bool>("~runSequential", runSequential, true);
+    ros::param::param<bool>("~run_sequential", runSequential, true);
     std::cout << " -> Running sequential = " << runSequential << std::endl;
 
-    ros::param::param<bool>("~detectMarkers", detectMarkers, true);
+    ros::param::param<bool>("~detect_markers", detectMarkers, true);
     std::cout << " -> Detecting markers = " << detectMarkers << std::endl;
 
     ros::param::param<bool>("~showDisplay", showDisplay, true);
     std::cout << " -> Show display = " << showDisplay << std::endl;
 
-    // - Files names
-    ros::param::param<std::string>("~cameraCalibrationName", cameraCalibrationName, "");
-    std::cout << " -> Camera calibration file name: " << cameraCalibrationName << std::endl;
+    // - File names
+    ros::param::param<std::string>("~cameraCalibrationName", cameraCalibrationFileName, "");
+    std::cout << " -> Camera calibration file name: " << cameraCalibrationFileName << std::endl;
 
     ros::param::param<std::string>("~vocabularyFileName", vocabularyFileName, "/home/pedros/ucoslam/3rdparty/vocabularies/orb.fbow");
     std::cout << " -> Vocabulary file name: " << vocabularyFileName << std::endl;
 
-    ros::param::param<std::string>("~worldMapName", worldMapName, "world.map");
-    std::cout << " -> World map file name: " << worldMapName << std::endl;
+    ros::param::param<std::string>("~worldMapName", inputWorldMapFileName, "");
+    std::cout << " -> World map file name: " << inputWorldMapFileName << std::endl;
 
-    std::cout << "[INFO] - Finished setting parameters" << std::endl;
+    ros::param::param<std::string>("~worldMapName", outputWorldMapFileName, "/home/pedros/catkin_ws/world.map");
+    std::cout << " -> World map file name: " << outputWorldMapFileName << std::endl;
+
+    std::cout << "======================================" << std::endl;
+    std::cout << "|     Finished setting parameters    |" << std::endl;
     std::cout << "======================================" << std::endl;
 }
 
@@ -99,7 +100,7 @@ void TelloSlamDisplayRos::cameraInfoCallback(const sensor_msgs::CameraInfo &msg)
     ucoslamCameraParams.Distorsion = distortionCoefficients;
     cameraInfoSub.shutdown();
     cameraInfoReceived = true;
-    std::cout << "Camera calibration parameters received" << std::endl;
+    std::cout << "[INFO] - Camera calibration parameters received" << std::endl;
 }
 
 void TelloSlamDisplayRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
@@ -125,10 +126,13 @@ void TelloSlamDisplayRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
 }
 
 void TelloSlamDisplayRos::configureUcoslam(){
-    if(cameraCalibrationName != ""){
-        // - Load camera parameters
-        ucoslamCameraParams.readFromXMLFile(cameraCalibrationName);
-    }
+    // - Load camera parameters by a file
+    if(cameraCalibrationFileName != "")
+        ucoslamCameraParams.readFromXMLFile(cameraCalibrationFileName);
+
+    // -= Load the world map
+    if(inputWorldMapFileName != "") 
+        loadMapFromFile();
 
     // - Set Ucoslam parameters
     ucoslam.setParams(worldMap, ucoslamParams, vocabularyFileName);
@@ -148,5 +152,9 @@ int TelloSlamDisplayRos::run(){
 }
 
 void TelloSlamDisplayRos::saveMapFile(){
-    worldMap -> saveToFile(worldMapName);
+    worldMap -> saveToFile(outputWorldMapFileName);
+}
+
+void TelloSlamDisplayRos::loadMapFromFile(){
+    worldMap -> readFromFile(inputWorldMapFileName);
 }

@@ -1,25 +1,28 @@
 <launch>
     <arg name="tello_slam_detector_node_name" default="tello_slam_detector_node"/>
 
-    <arg name="cameraCalibrationName" default=""/>
-    <arg name="vocabularyFileName" default="/home/pedros/ucoslam/3rdparty/vocabularies/orb.fbow"/>
-    <arg name="worldMapName" default="world.map"/>
+    <arg name="camera_calibration_file_name" default=""/>
+    <arg name="vocabulary_file_name" default="/home/pedros/ucoslam/3rdparty/vocabularies/orb.fbow"/>
+    <arg name="input_world_map_file_name" default=""/>
+    <arg name="output_world_map_file_name" default="world.map"/>
 
     <arg name="imageTopicName" default="camera/image_raw"/>
     <arg name="cameraInfoTopicName" default="camera/camera_info"/>
 
-    <arg name="runSequential" default="True"/> <arg name="detectMarkers" default="True"/>
+    <arg name="run_sequential" default="True"/> 
+    <arg name="detect_markers" default="True"/>
 
     <node name="$(arg tello_slam_detector_node_name)" pkg="tello_slam_ros" type="tello_slam_ros_detector" output="screen">
         <param name="imageTopicName" value="$(arg imageTopicName)" type="string"/>
         <param name="cameraInfoTopicName" value="$(arg cameraInfoTopicName)" type="string" />
 
-        <param name="cameraCalibrationName" value="$(arg cameraCalibrationName)" type="string" />
-        <param name="vocabularyFileName" value="$(arg vocabularyFileName)" type="string" />
-        <param name="worldMapName" value="$(arg worldMapName)" type="string" />
+        <param name="camera_calibration_file_name" value="$(arg camera_calibration_file_name)" type="string" />
+        <param name="vocabulary_file_name" value="$(arg vocabulary_file_name)" type="string" />
+        <param name="input_world_map_file_name" value="$(arg input_world_map_file_name)" type="string" />
+        <param name="output_world_map_file_name" value="$(arg output_world_map_file_name)" type="string" />
 
-        <param name="runSequntial" value="$(arg runSequential)" type="Boolean" />
-        <param name="detectMarkers" value="$(arg detectMarkers)" type="Boolean" />
+        <param name="run_sequntial" value="$(arg run_sequential)" type="Boolean" />
+        <param name="detect_markers" value="$(arg detect_markers)" type="Boolean" />
 
     </node>
 </launch>
