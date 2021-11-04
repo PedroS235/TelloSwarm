@@ -11,9 +11,9 @@
     <arg name="arudo_id_global_reference" default="-1"/>
 
     <arg name="camera_calibration_file_name" default=""/>
-    <arg name="vocabulary_file_name" default="/home/pedros/ucoslam/3rdparty/vocabularies/orb.fbow"/>
+    <arg name="vocabulary_file_name" default="$(find tello_slam_ros)/config/vocab.fbow"/>
     <arg name="input_world_map_file_name" default=""/>
-    <arg name="output_world_map_file_name" default="/home/pedros/catkin_ws/world.map"/>
+    <arg name="output_world_map_file_name" default="$(find tello_slam_ros)/config/output_map.map"/>
 
     <node name="$(arg tello_slam_display_node_name)" pkg="tello_slam_ros" type="tello_slam_ros_display" output="screen">
         <param name="show_display" value="$(arg show_display)" type="Boolean" />

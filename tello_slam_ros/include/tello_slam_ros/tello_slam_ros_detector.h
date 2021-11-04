@@ -72,6 +72,9 @@ protected:
     tf2_ros::TransformBroadcaster* tfTransformBroadcaster;
     geometry_msgs::Transform cameraPose2Tf();
 
+protected: 
+    std::string telloSlamDetectorFrameName;
+
 // - Constructors
 public:
     TelloSlamRos(int argc, char **argv);

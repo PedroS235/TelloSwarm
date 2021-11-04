@@ -75,6 +75,9 @@ void TelloSlamRos::readParameters(){
     ros::param::param<std::string>("~output_world_map_file_name", outputWorldMapFileName, "world.map");
     std::cout << " -> Output world map file name: " << outputWorldMapFileName << std::endl;
 
+    ros::param::param<std::string>("~tello_slam_detector_frame_name", telloSlamDetectorFrameName, "world.map");
+    std::cout << " -> Output world map file name: " << outputWorldMapFileName << std::endl;
+
     std::cout << "======================================" << std::endl;
     std::cout << "|     Finished setting parameters    |" << std::endl;
     std::cout << "======================================" << std::endl;
@@ -121,8 +124,7 @@ void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
         geometry_msgs::TransformStamped transformedStamped;
 
         transformedStamped.header.stamp = ros::Time::now();
-        transformedStamped.header.frame_id = "WorldMap";
-        transformedStamped.child_frame_id = "TelloSlamDectector";
+        transformedStamped.header.frame_id = telloSlamDetectorFrameName;
         if(!cameraPose.empty()){
             transformedStamped.transform = cameraPose2Tf();
             tfTransformBroadcaster -> sendTransform(transformedStamped);
@@ -176,7 +178,7 @@ void TelloSlamRos::configureUcoslam(){
     // - Set Ucoslam parameters
     ucoslam.setParams(worldMap, ucoslamParams, vocabularyFileName);
 
-    ucoslamParams.runSequential = runSequential;
+    ucoslamParams.runSequential = runSequential; // - when in sequential, it will not drop frames (good to create maps)
     ucoslamParams.detectMarkers = detectMarkers;
 }
 
