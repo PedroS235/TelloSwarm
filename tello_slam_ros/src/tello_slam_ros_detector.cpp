@@ -59,6 +59,9 @@ void TelloSlamRos::readParameters(){
     ros::param::param<bool>("~detect_markers", detectMarkers, true);
     std::cout << " -> Detecting markers = " << detectMarkers << std::endl;
 
+    ros::param::param<int>("~arudo_id_global_reference", arucoIdGlobalReference, -1);
+    std::cout << " -> The aruco marker " << arucoIdGlobalReference << "will be set as the middle of the world." << std::endl;
+
     // - File names
     ros::param::param<std::string>("~camera_calibration_file_name", cameraCalibrationFileName, "");
     std::cout << " -> Camera calibration file name: " << cameraCalibrationFileName << std::endl;
@@ -164,8 +167,11 @@ void TelloSlamRos::configureUcoslam(){
         ucoslamCameraParams.readFromXMLFile(cameraCalibrationFileName);
 
     // -= Load the world map
-    if(inputWorldMapFileName != "") 
+    if(inputWorldMapFileName != ""){
+        if(arucoIdGlobalReference >= 0)
+            setCenterReferenceOfMap();
         loadMapFromFile();
+    }
 
     // - Set Ucoslam parameters
     ucoslam.setParams(worldMap, ucoslamParams, vocabularyFileName);
@@ -190,4 +196,11 @@ void TelloSlamRos::saveMapFile(){
 
 void TelloSlamRos::loadMapFromFile(){
     worldMap -> readFromFile(inputWorldMapFileName);
+}
+
+void TelloSlamRos::setCenterReferenceOfMap(){
+    ucoslam::Map ucoslamMap;
+    ucoslamMap.readFromFile(inputWorldMapFileName);
+    ucoslamMap.centerRefSystemInMarker(arucoIdGlobalReference);
+    ucoslamMap.saveToFile(inputWorldMapFileName);
 }

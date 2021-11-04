@@ -51,6 +51,9 @@ protected:
     bool showDisplay;
     bool cameraInfoReceived = false;
 
+protected:
+    int arucoIdGlobalReference;
+
 // - Images received
 protected:
     std::string imageTopicName;
@@ -81,6 +84,7 @@ public:
     int run();
     void saveMapFile();
     void loadMapFromFile();
+    void setCenterReferenceOfMap();
 
 public:
     int openRos();

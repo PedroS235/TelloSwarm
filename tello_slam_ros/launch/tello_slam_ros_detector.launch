@@ -11,6 +11,7 @@
 
     <arg name="run_sequential" default="True"/> 
     <arg name="detect_markers" default="True"/>
+    <arg name="arudo_id_global_reference" default="-1"/>
 
     <node name="$(arg tello_slam_detector_node_name)" pkg="tello_slam_ros" type="tello_slam_ros_detector" output="screen">
         <param name="imageTopicName" value="$(arg imageTopicName)" type="string"/>
@@ -23,6 +24,7 @@
 
         <param name="run_sequntial" value="$(arg run_sequential)" type="Boolean" />
         <param name="detect_markers" value="$(arg detect_markers)" type="Boolean" />
+        <param name="arudo_id_global_reference" value="$(arg arudo_id_global_reference)" type="int" />
 
     </node>
 </launch>
