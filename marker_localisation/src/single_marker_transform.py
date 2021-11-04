@@ -1,8 +1,5 @@
 #!/usr/bin/python3
 
-
-import multiprocessing
-
 import rospy
 import tf2_ros
 import numpy as np
@@ -55,7 +52,6 @@ if __name__ == '__main__':
         t_WR.header.frame_id = args.world
         t_WR.child_frame_id = args.robot
         broadcaster.sendTransform(t_WR)
-        # for debugging purposes in case several markers are producing conflicts/jumps
         t_WR.child_frame_id = "%s_via_%s" % (args.robot, args.marker)
         broadcaster.sendTransform(t_WR)
         rate.sleep()
