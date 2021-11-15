@@ -72,8 +72,11 @@ void TelloSlamRos::readParameters(){
     ros::param::param<std::string>("~input_world_map_file_name", inputWorldMapFileName, "");
     std::cout << " -> Input world map file name: " << inputWorldMapFileName << std::endl;
 
-    ros::param::param<std::string>("~output_world_map_file_name", outputWorldMapFileName, "world.map");
+    ros::param::param<std::string>("~output_world_map_file_name", outputWorldMapFileName, "");
     std::cout << " -> Output world map file name: " << outputWorldMapFileName << std::endl;
+
+    ros::param::param<std::string>("~params_file_name", paramFileName, "");
+    std::cout << " -> Parameters file name: " <<  paramFileName << std::endl;
 
     ros::param::param<std::string>("~tello_slam_detector_frame_name", telloSlamDetectorFrameName, "world.map");
     std::cout << " -> Output world map file name: " << outputWorldMapFileName << std::endl;
@@ -124,7 +127,8 @@ void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
         geometry_msgs::TransformStamped transformedStamped;
 
         transformedStamped.header.stamp = ros::Time::now();
-        transformedStamped.header.frame_id = telloSlamDetectorFrameName;
+        transformedStamped.header.frame_id = "world";
+        transformedStamped.child_frame_id = telloSlamDetectorFrameName;
         if(!cameraPose.empty()){
             transformedStamped.transform = cameraPose2Tf();
             tfTransformBroadcaster -> sendTransform(transformedStamped);
@@ -133,31 +137,17 @@ void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
 }
 
 geometry_msgs::Transform TelloSlamRos::cameraPose2Tf(){
-    cv::Mat RVec(3, 3, CV_32FC1);
-    cv::Mat TVec(1, 3, CV_32FC1);
+    // - Converting the cameraPoseation matrix to a TF2 matrix
+    tf2::Matrix3x3 rot(cameraPose.at<float>(0,0), cameraPose.at<float>(0,1), cameraPose.at<float>(0,2),
+                       cameraPose.at<float>(1,0), cameraPose.at<float>(1,1), cameraPose.at<float>(1,2),
+                       cameraPose.at<float>(2,0), cameraPose.at<float>(2,1), cameraPose.at<float>(2,2));
 
-    // - Creating the rotating matrix
-    for(int row = 0; row<2; row++){
-        for(int col = 0; col<2; col++){
-            RVec.at<float>(row, col) = cameraPose.at<float>(row, col);
-        }
-    } 
-    // - Creating the Translation matrix
-    for(int row  = 0; row<3; row++)
-        TVec.at<float>(0, row) = cameraPose.at<float>(row, 3);
+    tf2::Quaternion q;
+    rot.getRotation(q);
+    // - Converting the cameraPoseation matrix to a TF2 matrix
+    tf2::Vector3 tf_orig(cameraPose.at<float>(0,3), cameraPose.at<float>(1,3), cameraPose.at<float>(2,3));
 
-    //cv::Mat rot(3, 3, CV_32FC1);
-    //cv::Rodrigues(RVec, rot);
-
-    // - Converting the rotation matrix to a TF2 matrix
-    tf2::Matrix3x3 tf_rot(RVec.at<float>(0,0), RVec.at<float>(0,1), RVec.at<float>(0,2),
-                       RVec.at<float>(1,0), RVec.at<float>(1,1), RVec.at<float>(1,2),
-                       RVec.at<float>(2,0), RVec.at<float>(2,1), RVec.at<float>(2,2));
-
-    // - Converting the rotation matrix to a TF2 matrix
-    tf2::Vector3 tf_orig(TVec.at<float>(0,0), TVec.at<float>(0,1), TVec.at<float>(0,2));
-
-    tf2::Transform tf2_transform = tf2::Transform(tf_rot, tf_orig);
+    tf2::Transform tf2_transform = tf2::Transform(q, tf_orig);
     geometry_msgs::Transform transform=tf2::toMsg(tf2_transform);
 
     return transform;
@@ -175,11 +165,16 @@ void TelloSlamRos::configureUcoslam(){
         loadMapFromFile();
     }
 
+    if(paramFileName != ""){
+        ucoslamParams.readFromYMLFile(paramFileName);
+    }else{
+        ucoslamParams.runSequential = runSequential; // - when in sequential, it will not drop frames (good to create maps)
+        ucoslamParams.detectMarkers = detectMarkers;
+    }
+
     // - Set Ucoslam parameters
     ucoslam.setParams(worldMap, ucoslamParams, vocabularyFileName);
 
-    ucoslamParams.runSequential = runSequential; // - when in sequential, it will not drop frames (good to create maps)
-    ucoslamParams.detectMarkers = detectMarkers;
 }
 
 int TelloSlamRos::run(){

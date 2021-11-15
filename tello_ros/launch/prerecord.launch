@@ -1,4 +1,6 @@
 <launch>
-    <node pkg="tello_ros" name="calib" type="camera_info_publisher.py"/>
-    <node pkg="tello_ros" name="video" type="mp4_publisher.py" args="$(find tello_ros)/tests/single_marker_long.mp4 --loop"/>
+    <arg name="grounded" default="true"/>
+
+    <node pkg="tello_ros" name="command_srv" type="command_server.py" args="$(eval '' if grounded else '--takeoff')"/> 
+    <node pkg="tello_ros" name="video" type="video_recorder.py" args="$(find tello_ros)/recordings/mapping.mp4" />
 </launch>

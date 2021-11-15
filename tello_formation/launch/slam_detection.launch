@@ -1,11 +1,8 @@
 <launch>
     <arg name="id" default="0" />
-    <arg name="aruco_id_reference" default="0"/>
 
         <group ns="tello_$(arg id)">
             <include file="$(find tello_slam_ros)/launch/tello_slam_ros_ros_detector.launch">
-                <arg name="aruco_marker_child_base_name" value="est_by_$(arg id)_aruco_marker_"/>
-                <arg name="aruco_id_global_referece" value="-1" />
                 <arg name="run_sequential" value="False" />
                 <arg name="input_world_map_file_name" value="/home/pedros/slam-videos/world.map" />
             </include>

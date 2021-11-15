@@ -60,24 +60,27 @@ void TelloSlamDisplayRos::readParameters(){
     ros::param::param<bool>("~detect_markers", detectMarkers, true);
     std::cout << " -> Detecting markers = " << detectMarkers << std::endl;
 
-    ros::param::param<bool>("~showDisplay", showDisplay, true);
+    ros::param::param<bool>("~show_display", showDisplay, true);
     std::cout << " -> Show display = " << showDisplay << std::endl;
 
     ros::param::param<int>("~arudo_id_global_reference", arucoIdGlobalReference, -1);
-    std::cout << " -> The aruco marker " << arucoIdGlobalReference << "will be set as the middle of the world." << std::endl;
+    std::cout << " -> The aruco marker " << arucoIdGlobalReference << " will be set as the middle of the world." << std::endl;
 
     // - File names
-    ros::param::param<std::string>("~cameraCalibrationName", cameraCalibrationFileName, "");
+    ros::param::param<std::string>("~camera_calibration_name", cameraCalibrationFileName, "");
     std::cout << " -> Camera calibration file name: " << cameraCalibrationFileName << std::endl;
 
-    ros::param::param<std::string>("~vocabularyFileName", vocabularyFileName, "/home/pedros/ucoslam/3rdparty/vocabularies/orb.fbow");
+    ros::param::param<std::string>("~vocabulary_file_name", vocabularyFileName, "/home/pedros/ucoslam/3rdparty/vocabularies/orb.fbow");
     std::cout << " -> Vocabulary file name: " << vocabularyFileName << std::endl;
 
-    ros::param::param<std::string>("~worldMapName", inputWorldMapFileName, "");
+    ros::param::param<std::string>("~input_world_map_file_name", inputWorldMapFileName, "");
     std::cout << " -> World map file name: " << inputWorldMapFileName << std::endl;
 
-    ros::param::param<std::string>("~worldMapName", outputWorldMapFileName, "/home/pedros/catkin_ws/world.map");
+    ros::param::param<std::string>("~output_world_map_file_name", outputWorldMapFileName, "/home/pedros/catkin_ws/world.map");
     std::cout << " -> World map file name: " << outputWorldMapFileName << std::endl;
+
+    ros::param::param<std::string>("~params_file_name", paramFileName, "");
+    std::cout << " -> Parameters file name: " <<  paramFileName << std::endl;
 
     std::cout << "======================================" << std::endl;
     std::cout << "|     Finished setting parameters    |" << std::endl;
@@ -140,11 +143,15 @@ void TelloSlamDisplayRos::configureUcoslam(){
         loadMapFromFile();
     }
 
+    if(paramFileName != ""){
+        ucoslamParams.readFromYMLFile(paramFileName);
+    }else{
+        ucoslamParams.runSequential = runSequential; // - when in sequential, it will not drop frames (good to create maps)
+        ucoslamParams.detectMarkers = detectMarkers;
+    }
+
     // - Set Ucoslam parameters
     ucoslam.setParams(worldMap, ucoslamParams, vocabularyFileName);
-
-    ucoslamParams.runSequential = runSequential;
-    ucoslamParams.detectMarkers = detectMarkers;
 }
 
 int TelloSlamDisplayRos::run(){

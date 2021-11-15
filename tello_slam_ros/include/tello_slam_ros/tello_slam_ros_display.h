@@ -39,6 +39,7 @@ protected:
     std::string vocabularyFileName;
     std::string inputWorldMapFileName;
     std::string outputWorldMapFileName;
+    std::string paramFileName;
 
 protected:
     std::string cameraInfoTopicName;

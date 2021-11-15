@@ -240,6 +240,7 @@ On the resources folder you will find rviz_config. Once you are in the rviz you 
     - marker_localization
     - tello_formation
     - tello_ros
+    - tello_slam_ros
 - The simulation folder contains a simulation of what the swarm of drones should be able to do.
     - Inside there lies 2 Python files, [main.py](http://main.py/) and [capt.py](http://capt.py/). [capt.py](http://capt.py/) is the algorithm that computes the trajectories that the drones should do. The [main.py](http://main.py/) is the actual simulation, and you can run it by typing in the terminal the following:
 
@@ -262,3 +263,9 @@ On the resources folder you will find rviz_config. Once you are in the rviz you 
     - **capt**: this class contains the algorithm that computes the trajectories of the drones;
     - **supervisor**: this class will run on the supervisor and is the one that sends the commands to the controllers;
     - **controller**: this class will run on the controllers and is the one that communicates with the drones.
+
+## tello_slam_ros
+
+- This package purpose, is to make possible the communication between ROS and UcoSLAM. This package contains 2 nodes:
+    - **tello_slam_ros_detector_node**: this node is responsible of passing the image frame of the drone to UcoSLAM in order to process it. Once the frame processed, the camera pose will be published to the TF package;
+    - **tello_slam_ros_display_node**: this node purpose is to publish the frame with the keypoints/markers detected drawn in the image. As an option, the a OpenCV window can be enabled, which allows to also see the map being created or see where the pose is within the map.
