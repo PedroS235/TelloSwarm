@@ -21,9 +21,10 @@ int TelloSlamDisplayRos::openRos(){
     ros::NodeHandle nh;
 
     // - Image subscriber
-    // - hard coded
     imageSub = imageTransport -> subscribe(imageTopicName, 1, &TelloSlamDisplayRos::imageCallback, this);
+    // - Camera info subscriber
     cameraInfoSub = nh.subscribe(cameraInfoTopicName, 1, &TelloSlamDisplayRos::cameraInfoCallback, this);
+    // - Image publisher
     outputImagePub = imageTransport -> advertise(outputImageTopicName, 1);
     return 0;
 }
@@ -48,7 +49,7 @@ void TelloSlamDisplayRos::readParameters(){
     std::cout << " -> Image topic name: " << imageTopicName << std::endl;
 
     ros::param::param<std::string>("~camera_info_topic_name", cameraInfoTopicName, "camera/camera_info");
-    std::cout << " -> Camera infot topic name: " << cameraInfoTopicName<< std::endl;
+    std::cout << " -> Camera info topic name: " << cameraInfoTopicName<< std::endl;
 
     ros::param::param<std::string>("~output_image_topic_name", outputImageTopicName, "tello_slam/tello_slam_observation_image/image_raw");
     std::cout << " -> Outpuc image topic name: " << outputImageTopicName << std::endl;

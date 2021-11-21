@@ -3,17 +3,14 @@
     <arg name="grounded" default="true"/>
 
     <group ns="tello_$(arg id)">
-        <include file="$(find tello_ros)/launch/drone.launch" if="$(eval grounded)"/>
-        <include file="$(find tello_ros)/launch/drone.launch" if="$(eval not grounded)">
-            <arg name="grounded" value="false"/>
+
+        <include file="$(find tello_ros)/launch/drone.launch">
+            <arg name="grounded" value="$(arg grounded)"/>
         </include>
 
-        <include file="$(find marker_localisation)/launch/naive_estimation.launch">
-            <arg name="estimated_marker_base_name" value="est_by_$(arg id)_aruco_marker_"/>
-            <arg name="detector" value="aruco_detector_$(arg id)"/>
-            <arg name="robot" value="tello_$(arg id)"/>
-        </include>
 
-        <node pkg="tello_formation" name="controller" type="controller.py" args="--id $(arg id)"/>
+        <param name="search_marker_enabled" value="true"/> 
+        <node pkg="tello_formation" name="controller" type="controller.py" args="--id $(arg id)"/> 
+
     </group>
 </launch>

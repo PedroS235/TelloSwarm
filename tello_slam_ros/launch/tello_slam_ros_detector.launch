@@ -7,18 +7,19 @@
     <arg name="output_world_map_file_name" default="$(find tello_slam_ros)/config/output_map.map"/>
     <arg name="params_file_name" default="$(find tello_slam_ros)/config/params.yml"/>
 
-    <arg name="imageTopicName" default="camera/image_raw"/>
-    <arg name="cameraInfoTopicName" default="camera/camera_info"/>
+    <arg name="image_topic_name" default="camera/image_raw"/>
+    <arg name="camera_info_topic_name" default="camera/camera_info"/>
 
     <arg name="run_sequential" default="False"/> 
     <arg name="detect_markers" default="True"/>
     <arg name="arudo_id_global_reference" default="-1"/>
 
     <arg name="tello_slam_detector_frame_name" default="tello_slam_detector"/>
+    <arg name="tello_slam_detector_child_frame_name" default="camera_pose_estimation"/>
 
     <node name="$(arg tello_slam_detector_node_name)" pkg="tello_slam_ros" type="tello_slam_ros_detector" output="screen">
-        <param name="imageTopicName" value="$(arg imageTopicName)" type="string"/>
-        <param name="cameraInfoTopicName" value="$(arg cameraInfoTopicName)" type="string" />
+        <param name="image_topic_name" value="$(arg image_topic_name)" type="string"/>
+        <param name="camera_info_topic_name" value="$(arg camera_info_topic_name)" type="string" />
 
         <param name="camera_calibration_file_name" value="$(arg camera_calibration_file_name)" type="string" />
         <param name="vocabulary_file_name" value="$(arg vocabulary_file_name)" type="string" />
@@ -26,11 +27,12 @@
         <param name="output_world_map_file_name" value="$(arg output_world_map_file_name)" type="string" />
         <param name="params_file_name" value="$(arg params_file_name)" type="string" />
 
-        <param name="run_sequntial" value="$(arg run_sequential)" type="Boolean" />
+        <param name="run_sequential" value="$(arg run_sequential)" type="Boolean" />
         <param name="detect_markers" value="$(arg detect_markers)" type="Boolean" />
         <param name="arudo_id_global_reference" value="$(arg arudo_id_global_reference)" type="int" />
 
         <param name="tello_slam_detector_frame_name" value="$(arg tello_slam_detector_frame_name)" type="string" />
+        <param name="tello_slam_detector_child_frame_name" value="$(arg tello_slam_detector_child_frame_name)" type="string" />
 
     </node>
 </launch>

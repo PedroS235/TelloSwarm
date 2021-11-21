@@ -75,6 +75,7 @@ protected:
 
 protected: 
     std::string telloSlamDetectorFrameName;
+    std::string telloSlamDetectorChildFrameName;
 
 // - Constructors
 public:

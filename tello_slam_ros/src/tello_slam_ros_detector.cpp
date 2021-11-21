@@ -50,7 +50,7 @@ void TelloSlamRos::readParameters(){
     std::cout << " -> Image topic name: " << imageTopicName << std::endl;
 
     ros::param::param<std::string>("~camera_info_topic_name", cameraInfoTopicName, "camera/camera_info");
-    std::cout << " -> Camera infot topic name: " << cameraInfoTopicName << std::endl;
+    std::cout << " -> Camera info topic name: " << cameraInfoTopicName << std::endl;
 
     // - Ucoslam params
     ros::param::param<bool>("~run_sequential", runSequential, true);
@@ -78,8 +78,11 @@ void TelloSlamRos::readParameters(){
     ros::param::param<std::string>("~params_file_name", paramFileName, "");
     std::cout << " -> Parameters file name: " <<  paramFileName << std::endl;
 
-    ros::param::param<std::string>("~tello_slam_detector_frame_name", telloSlamDetectorFrameName, "world.map");
-    std::cout << " -> Output world map file name: " << outputWorldMapFileName << std::endl;
+    ros::param::param<std::string>("~tello_slam_detector_frame_name", telloSlamDetectorFrameName, "tello_slam_detector");
+    std::cout << " -> TF2 frame name: " << telloSlamDetectorFrameName << std::endl;
+
+    ros::param::param<std::string>("~tello_slam_detector_child_frame_name", telloSlamDetectorChildFrameName, "camera_pose_estimation");
+    std::cout << " -> TF2 child frame name: " << telloSlamDetectorChildFrameName << std::endl;
 
     std::cout << "======================================" << std::endl;
     std::cout << "|     Finished setting parameters    |" << std::endl;
@@ -127,8 +130,8 @@ void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
         geometry_msgs::TransformStamped transformedStamped;
 
         transformedStamped.header.stamp = ros::Time::now();
-        transformedStamped.header.frame_id = "world";
-        transformedStamped.child_frame_id = telloSlamDetectorFrameName;
+        transformedStamped.header.frame_id = telloSlamDetectorFrameName;
+        transformedStamped.child_frame_id = telloSlamDetectorChildFrameName;
         if(!cameraPose.empty()){
             transformedStamped.transform = cameraPose2Tf();
             tfTransformBroadcaster -> sendTransform(transformedStamped);
