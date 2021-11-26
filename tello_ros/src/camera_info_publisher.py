@@ -31,6 +31,10 @@ def retrieve_data(filename):
     camera_info_msg.height = calib_data["image_height"]
     camera_info_msg.K = calib_data["camera_matrix"]["data"]
     camera_info_msg.D = calib_data["distortion_coefficients"]["data"]
+    camera_info_msg.distortion_model = calib_data["distortion_model"]
+    camera_info_msg.R = calib_data["rotation"]["data"]
+    camera_info_msg.P = calib_data["p"]["data"]
+
     return camera_info_msg
 
 if __name__ == '__main__':

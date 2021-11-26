@@ -60,14 +60,13 @@ class VideoStreamClient:
             print(e)
 
 
-def publish(client, id, verbose=False, rate=30):
+def publish(client, verbose=False, rate=30):
     """
 
     """
     publisher = rospy.Publisher("camera/image_raw", Image, queue_size=2)
     rospy.init_node('tello_video')
     rospy.loginfo("Started tello_video node")
-    #rospy.('command')  # wait for streamon
     rate = rospy.Rate(RATE)
     client.start()
     while not rospy.is_shutdown():
@@ -75,7 +74,7 @@ def publish(client, id, verbose=False, rate=30):
         while frame is None:
             frame = client.frame
         img_msg = ros_numpy.msgify(Image, frame, encoding='rgb8')
-        img_msg.header.stamp = rospy.Time(0)
+        img_msg.header.stamp = rospy.Time.now()
         publisher.publish(img_msg)
         if VERBOSE:
             rospy.loginfo("Published video frame")

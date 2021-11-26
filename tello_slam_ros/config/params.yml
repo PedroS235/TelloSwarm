@@ -24,7 +24,7 @@ detectKeyPoints: 1
 removeKeyPointsIntoMarkers: 1
 minDescDistance: 3.4028234663852886e+38
 baseline_medianDepth_ratio_min: 9.9999997764825821e-03
-aruco_markerSize: 1.
+aruco_markerSize: 0.177
 projDistThr: 15
 maxVisibleFramesPerMarker: 10
 minNumProjPoints: 3

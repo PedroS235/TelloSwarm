@@ -5,8 +5,8 @@
     <group ns="tello_$(arg id)">
         <!-- Tello slam launch files -->
         <include file="$(find tello_slam_ros)/launch/tello_slam_ros_detector.launch">
-            <arg name="tello_slam_detector_frame_name" value="tello_slam_detector_$(arg id)"/>
-            <arg name="tello_slam_detector_child_frame_name" value="camera_pose_est_$(arg id)"/>
+            <arg name="tello_slam_detector_frame_name" value="slam_detector_$(arg id)"/>
+            <arg name="tello_slam_detector_child_frame_name" value="slam_vision_$(arg id)"/>
         </include>
 
         <include file="$(find tello_slam_ros)/launch/tello_slam_ros_display.launch">
@@ -15,7 +15,6 @@
 
         <!-- Aruco_eye launch files -->
         <include file="$(find aruco_eye_ros)/launch/aruco_eye_ros_detector.launch">
-            <arg name="aruco_marker_child_base_name" value="est_by_$(arg id)_aruco_marker_"/>
             <arg name="aruco_detector_frame_name" value="aruco_detector_$(arg id)"/>
         </include>
 
@@ -26,10 +25,9 @@
         
         <!-- marker_localisation launch files -->
         <include file="$(find marker_localisation)/launch/naive_estimation.launch">
-            <arg name="estimated_marker_base_name" value="est_by_$(arg id)_aruco_marker_"/>
-            <arg name="detector" value="aruco_detector_$(arg id)"/>
+            <arg name="aruco_detector" value="aruco_detector_$(arg id)"/>
+            <arg name="slam_detector" value="slam_detector_$(arg id)"/>
             <arg name="robot" value="tello_$(arg id)"/>
         </include>
-
     </group>
 </launch>

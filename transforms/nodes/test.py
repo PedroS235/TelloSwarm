@@ -47,13 +47,13 @@ if __name__ == '__main__':
     rate = rospy.Rate(10.0)
     while not rospy.is_shutdown():
         try:
-            trans_base = tfBuffer.lookup_transform("tello_slam_detector", 'base_link', rospy.Time())
-            trans_world = tfBuffer.lookup_transform("world", 'base_link', rospy.Time())
+            trans_base = tfBuffer.lookup_transform("aruco_detector_0", 'aruco_marker_0', rospy.Time())
+            #trans_world = tfBuffer.lookup_transform("world", 'base_link', rospy.Time())
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             rate.sleep()
             continue
 
         rospy.loginfo(trans_base)
-        rospy.loginfo(trans_world)
+        #rospy.loginfo(trans_world)
 
         rate.sleep()

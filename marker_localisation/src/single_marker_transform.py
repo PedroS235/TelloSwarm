@@ -14,7 +14,7 @@ from geometry_msgs.msg import Transform, TransformStamped
 
 def static_lookup(buffer, source, target):
     # timeout of 5s: give time to other node to start
-    t_BA = buffer.lookup_transform(source, target, rospy.Time(0), rospy.Duration(5))
+    t_BA = buffer.lookup_transform(source, target, rospy.Time(), rospy.Duration(5))
     H_BA = np.array(ros_numpy.numpify(t_BA.transform))
     return H_BA
 
@@ -23,9 +23,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--detector', help='Name of detector frame', default='aruco_detector')
     parser.add_argument('-r', '--robot', help='Name of robot (drone) frame', default='drone')
-    parser.add_argument('-w', '--world', help='Name of detector frame', default='world')
-    parser.add_argument('-e', '--marker-estimation', help='Name of estimated marker frame', default='est_aruco_marker_0')
-    parser.add_argument('-m', '--marker', help='Name of true marker frame', default='aruco_marker_0')
+    parser.add_argument('-w', '--world', help='Name of the world', default='world')
+    parser.add_argument('-e', '--marker-estimation', help='Name of estimated marker frame', default='aruco_marker_0')
+    parser.add_argument('-m', '--marker', help='Name of true marker frame', default='world_aruco_marker_0')
     args, unknown = parser.parse_known_args()
 
     name = "%s_in_%s_via_%s" % (args.robot, args.world, args.marker)
@@ -36,15 +36,17 @@ if __name__ == '__main__':
     broadcaster = tf2_ros.TransformBroadcaster()
     # this can and should fail if those transforms are not found
     H_WM = static_lookup(buf, args.world, args.marker)
+    rospy.loginfo(f'\033[93m{H_WM}\033[0m')
     H_DR = static_lookup(buf, args.detector, args.robot)
 
     rate = rospy.Rate(10.0)
     while not rospy.is_shutdown():
         try:
-            t_MD = buf.lookup_transform(args.marker_estimation, args.detector, rospy.Time(0))
+            t_MD = buf.lookup_transform(args.marker_estimation, args.detector, rospy.Time())
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             rate.sleep()
             continue
+
         H_MD = ros_numpy.numpify(t_MD.transform)
         H_WR = np.dot(np.dot(H_WM, H_MD), H_DR)
         t_WR = TransformStamped(transform=ros_numpy.msgify(Transform, H_WR))
@@ -52,7 +54,7 @@ if __name__ == '__main__':
         t_WR.header.frame_id = args.world
         t_WR.child_frame_id = args.robot
         broadcaster.sendTransform(t_WR)
-        t_WR.child_frame_id = "%s_via_%s" % (args.robot, args.marker)
-        broadcaster.sendTransform(t_WR)
+        #t_WR.child_frame_id = "%s_via_%s" % (args.robot, args.marker)
+        #broadcaster.sendTransform(t_WR)
         rate.sleep()
 

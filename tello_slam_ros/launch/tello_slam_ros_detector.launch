@@ -3,7 +3,7 @@
 
     <arg name="camera_calibration_file_name" default=""/>
     <arg name="vocabulary_file_name" default="$(find tello_slam_ros)/config/vocab.fbow"/>
-    <arg name="input_world_map_file_name" default=""/>
+    <arg name="input_world_map_file_name" default="$(find tello_slam_ros)/config/input_map.map"/>
     <arg name="output_world_map_file_name" default="$(find tello_slam_ros)/config/output_map.map"/>
     <arg name="params_file_name" default="$(find tello_slam_ros)/config/params.yml"/>
 

@@ -1,7 +1,7 @@
 <launch>
     <!-- frames -->
     <arg name="world" default="world"/>
-    <arg name="marker_base_name" default="aruco_marker_"/>
+    <arg name="marker_base_name" default="world_aruco_marker_"/>
 
     <arg name="marker_count" default="1"/>
 
