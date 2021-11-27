@@ -3,7 +3,7 @@
     <arg name="goal_count" default="3"/>
     <arg name="marker_count" default="1"/>
 
-    <include file="$(find marker_localisation)/launch/static_markers.launch">
+    <include file="$(find pose_estimation)/launch/static_markers.launch">
         <arg name="marker_count" value="$(arg marker_count)"/>
     </include>
 

@@ -23,8 +23,8 @@
         </include>
 
         
-        <!-- marker_localisation launch files -->
-        <include file="$(find marker_localisation)/launch/naive_estimation.launch">
+        <!-- pose_estimation launch files -->
+        <include file="$(find pose_estimation)/launch/naive_estimation.launch">
             <arg name="aruco_detector" value="aruco_detector_$(arg id)"/>
             <arg name="slam_detector" value="slam_detector_$(arg id)"/>
             <arg name="robot" value="tello_$(arg id)"/>

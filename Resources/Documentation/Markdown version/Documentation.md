@@ -75,7 +75,7 @@ $ roscd tello_ros/src
 $ chmod +x ./*
 $ roscd tello_formation/src
 $ chmod +x ./*
-$ roscd marker_localisation/src
+$ roscd pose_estimation/src
 $ chmod +x ./*
 ```
 
@@ -104,7 +104,7 @@ Once printed you will need to **measure the size of the aruco marker on the pape
 
 ## Setting the environment
 
-On the space/room where you will launch the swarm, you will need to **place the aruco marker in some wall**. You should place it between 30-50 cm above the ground. Once the aruco marker fixed, you should put some mark on the ground where the center of the room is, which will be the coordination (0,0) of the world. Then mesure the distance (x, y, z) between the (0,0, 0) of the world relative to the aruco marker. The other measurement are the goal positions. Again place some mark on the ground where you want the goals position to be. Then mesure the distance (x, y, 0) from the goal relative to the world. Once you have all the measurements, then you can go to the `marker_localisation/config` folder and open the `config.yaml` file. There you will find aruco_marker_0: [x, y, z, pitch, roll, yaw] and its where you should set the mesurements for the aruco marker in **meters. (**For the pitch roll and yam follow the instruction on the file)**.**
+On the space/room where you will launch the swarm, you will need to **place the aruco marker in some wall**. You should place it between 30-50 cm above the ground. Once the aruco marker fixed, you should put some mark on the ground where the center of the room is, which will be the coordination (0,0) of the world. Then mesure the distance (x, y, z) between the (0,0, 0) of the world relative to the aruco marker. The other measurement are the goal positions. Again place some mark on the ground where you want the goals position to be. Then mesure the distance (x, y, 0) from the goal relative to the world. Once you have all the measurements, then you can go to the `pose_estimation/config` folder and open the `config.yaml` file. There you will find aruco_marker_0: [x, y, z, pitch, roll, yaw] and its where you should set the mesurements for the aruco marker in **meters. (**For the pitch roll and yam follow the instruction on the file)**.**
 
 For the goals you will need to go to the `tello_formation/launch` folder and open the `static_goals.launch` file and change the distances accordingly, also in **meters** (same as for the aruco marker).
 
