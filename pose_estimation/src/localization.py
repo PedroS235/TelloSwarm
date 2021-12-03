@@ -2,8 +2,8 @@
 
 import rospy
 import tf2_ros
-import numpy as np
 import ros_numpy
+import math
 
 from geometry_msgs.msg import Transform, TransformStamped
 
@@ -57,7 +57,7 @@ if __name__ == '__main__':
         static_transformStamped.transform.translation.z = delta_z
 
         static_transformStamped.transform.rotation.x = 0.0
-        static_transformStamped.transform.rotation.y = 0.0
+        static_transformStamped.transform.rotation.y = math.pi()/2 
         static_transformStamped.transform.rotation.z = 0.0
         static_transformStamped.transform.rotation.w = 1
 

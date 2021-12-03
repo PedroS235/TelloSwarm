@@ -6,5 +6,5 @@ pose_estimation:
     # - left: pi, pi, 0
     # - back: pi/2, 0, pi
     # - right: 0, pi, 0
-    world_aruco_marker_0: [0, 2.30, 0.68, rad(pi), rad(pi), 0]
+    VMw_0: [0, 2.30, 0.68, rad(pi), rad(pi), 0]
     world_aruco_marker_1: [0, -0.5, 0.3, rad(pi), rad(pi), 0]

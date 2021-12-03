@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 
+from math import pi
 import rospy
 import tf2_ros
 import numpy as np
 import ros_numpy
 
+from tf.transformations import *
 from geometry_msgs.msg import Transform, TransformStamped
+from tf2_ros.buffer_interface import TransformRegistration
 
 # Notes on variable naming:
 #  t_BA: transform (ROS msg type) from source B to target A
@@ -39,11 +42,11 @@ if __name__ == '__main__':
     rate = rospy.Rate(10.0)
     while not rospy.is_shutdown():
         try:
-            t_MD = buf.lookup_transform(args.camera, args.detector, rospy.Time())
+            t_MD = buf.lookup_transform(args.detector, args.camera, rospy.Time())
         except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
             rate.sleep()
             continue
-
+        
         H_MD = ros_numpy.numpify(t_MD.transform)
         H_WR = np.dot(H_MD, H_DR)
         t_WR = TransformStamped(transform=ros_numpy.msgify(Transform, H_WR))
@@ -51,7 +54,5 @@ if __name__ == '__main__':
         t_WR.header.frame_id = args.world
         t_WR.child_frame_id = args.robot
         broadcaster.sendTransform(t_WR)
-        #t_WR.child_frame_id = "%s_via_%s" % (args.robot, args.marker)
-        #broadcaster.sendTransform(t_WR)
         rate.sleep()
 

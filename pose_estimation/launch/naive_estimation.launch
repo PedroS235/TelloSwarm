@@ -20,7 +20,7 @@
     <!-- static transform from the camera to the middle of the drone -->
     <node pkg="tf2_ros" name="slam_detector_offset" type="static_transform_publisher"
         args="$(arg detector_offset) $(arg robot) $(arg slam_detector)"/>
-
+    
     <node pkg="pose_estimation" name="$(arg robot)_in_world_odometry_via_$(arg slam_detector)0" type="tello_to_odom_transform.py"
         args="-r $(arg robot) -d $(arg slam_detector) -c slam_vision_0"/>
 
