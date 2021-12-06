@@ -36,7 +36,7 @@ markersOptWeight: 5.0000000000000000e-01
 minMarkersForMaxWeight: 5
 autoAdjustKpSensitivity: 0
 global_optimizer: g2o
-aruco-dictionary: ARUCO_MIP_36h12
+aruco-dictionary: ALL_DICTS
 aruco-detectMode: DM_NORMAL
 aruco-cornerRefinementM: CORNER_SUBPIX
 aruco-minSize: 0.
