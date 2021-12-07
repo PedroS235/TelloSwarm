@@ -1,38 +1,33 @@
 <launch>
     <!-- frames -->
-    <arg name="world" default="world"/>
-    <arg name="marker_base_name" default="world_aruco_marker_"/>
-    <arg name="estimated_marker_base_name" default="aruco_marker_"/>
-    <arg name="slam_detector" default="slam_detector_"/>
-    <arg name="aruco_detector" default="aruco_detector_"/>
-    <arg name="robot" default="drone"/>
+    <arg name="world_frame_name" default="world"/>
+    <arg name="world_odometry_frame_name" default="world_odometry"/>
+    <arg name="camera_world_frame_name" default="camera_sensor"/>
+    <arg name="camera_world_odometry_frame_name" default="slam_vision"/>
+    <arg name="marker_detected_frame_name" default="visual_marker_detected_"/>
+    <arg name="marker_in_world_frame_name" default="visual_marker_in_world_"/>
+    <arg name="marker_in_world_odometry_frame_name" default="visual_marker_in_world_odometry"/>
+    <arg name="robot_frame_name" default="robot"/>
     
     <arg name="pi" value="3.141592653589793"/>
     <!-- Offset from the camera to the middle of the drone (mesured) -->
-    <arg name="detector_offset" default="$(eval ' '.join(map(str, [0.05, 0, 0, -pi/2, 0, -pi/2])))"/>
+    <arg name="detector_offset" default="$(eval ' '.join(map(str, [0.04, 0, 0, -pi/2, 0, -pi/2])))"/>
 
     <arg name="marker_count" default="1"/>
 
-    <!-- static transform from the camera to the middle of the drone -->
-    <node pkg="tf2_ros" name="aruco_detector_offset" type="static_transform_publisher"
-        args="$(arg detector_offset) $(arg robot) $(arg aruco_detector)"/>
 
     <!-- static transform from the camera to the middle of the drone -->
-    <node pkg="tf2_ros" name="slam_detector_offset" type="static_transform_publisher"
-        args="$(arg detector_offset) $(arg robot) $(arg slam_detector)"/>
+    <node pkg="tf2_ros" name="camera_offset" type="static_transform_publisher"
+        args="$(arg detector_offset) $(arg robot_frame_name) $(arg camera_world_frame_name)"/>
     
-    <node pkg="pose_estimation" name="$(arg robot)_in_world_odometry_via_$(arg slam_detector)0" type="tello_to_odom_transform.py"
-        args="-r $(arg robot) -d $(arg slam_detector) -c slam_vision_0"/>
-
-    <node pkg="pose_estimation" name="static_transform_world_odom" type="localization.py"/>
-    
-    <node if="$(eval marker_count > 0)" pkg="pose_estimation" name="$(arg robot)_in_$(arg world)_via_$(arg estimated_marker_base_name)0" type="single_marker_transform.py"
-        args="-e $(arg estimated_marker_base_name)0 -m $(arg marker_base_name)0 -r $(arg robot) -d $(arg aruco_detector) -w $(arg world)"/>
-
-    <node if="$(eval marker_count > 1)" pkg="pose_estimation" name="$(arg robot)_in_$(arg world)_via_$(arg estimated_marker_base_name)1" type="single_marker_transform.py"
-        args="-e $(arg estimated_marker_base_name)1 -m $(arg marker_base_name)1 -r $(arg robot) -d $(arg aruco_detector) -w $(arg world)"/>
-
-    <node if="$(eval marker_count > 2)" pkg="pose_estimation" name="$(arg robot)_in_$(arg world)_via_$(arg estimated_marker_base_name)2" type="single_marker_transform.py"
-        args="-e $(arg estimated_marker_base_name)2 -m $(arg marker_base_name)2 -r $(arg robot) -d $(arg aruco_detector) -w $(arg world)"/> 
-    
+    <node pkg="pose_estimation" name="drone_location_estimation" type="location_estimation.py"> 
+        <param name="world_frame_name" value="$(arg world_frame_name)" type="string" />
+        <param name="world_odometry_frame_name" value="$(arg world_odometry_frame_name)" type="string" />
+        <param name="camera_world_frame_name" value="$(arg camera_world_frame_name)" type="string" />
+        <param name="camera_world_odometry_frame_name" value="$(arg camera_world_odometry_frame_name)" type="string" />
+        <param name="marker_detected_frame_name" value="$(arg marker_detected_frame_name)" type="string" />
+        <param name="marker_in_world_frame_name" value="$(arg marker_in_world_frame_name)" type="string" />
+        <param name="marker_in_world_odometry_frame_name" value="$(arg marker_in_world_odometry_frame_name)" type="string" />
+        <param name="robot_frame_name" value="$(arg robot_frame_name)" type="string" />
+    </node>
 </launch>
