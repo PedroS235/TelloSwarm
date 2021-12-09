@@ -1,4 +1,4 @@
-# Documentation
+# BSP-Documentation
 
 ***This document will guide you on how to successfully launch the swarm, test it and to set all the necessary dependencies needed***
 
@@ -15,13 +15,13 @@
     - once you have one of the above softwares, you will need to flash the ubuntu image (of step 1) to an sdcard (preferably 32Gb+).
 3. After having installed the image on a sdcard you can insert it on the raspberry pi 4/odroid XU4 and boot it up. You should be now prompt to configure the OS. (Name suggestion: tello_controller_**n**, *where n is the number of the controller*).
 4. **Enabling ssh** (insert the following commnads on the terminal:
-
+    
     ```bash
     $ sudo apt update
     $ sudo apt install openssh-server
     $ sudo ufw allow ssh
     ```
-
+    
 5. **Install ROS**. To do so follow the instruction on section 2
 6. **Build the project workspace**. To do so follow the instructions on section 3
 7. **Install the needed dependencies**. To do so follow the instructions on section 4
@@ -75,7 +75,7 @@ $ roscd tello_ros/src
 $ chmod +x ./*
 $ roscd tello_formation/src
 $ chmod +x ./*
-$ roscd pose_estimation/src
+$ roscd marker_localisation/src
 $ chmod +x ./*
 ```
 
@@ -90,6 +90,22 @@ $ chmod +x ./*
 ```bash
 $ sudo apt install python3-pip
 $ sudo apt install git
+$ sudo apt-get install cmake libopencv-dev qtbase5-dev libqt5opengl5-dev libopenni2-dev
+```
+
+**Installing Ucoslam:**
+
+1. First, download [Ucoslam](https://sourceforge.net/projects/ucoslam/).
+2. Unzip the folder, and rename it to ucoslam
+3. Open a terminal window where the file is located and run the following commands:
+
+```bash
+$ cd ucoslam
+$ mkdir build
+$ cd build
+$ cmake ../ -DBUILD_GUI=ON
+$ make -j4
+$ sudo make install
 ```
 
 ---
@@ -104,7 +120,7 @@ Once printed you will need to **measure the size of the aruco marker on the pape
 
 ## Setting the environment
 
-On the space/room where you will launch the swarm, you will need to **place the aruco marker in some wall**. You should place it between 30-50 cm above the ground. Once the aruco marker fixed, you should put some mark on the ground where the center of the room is, which will be the coordination (0,0) of the world. Then mesure the distance (x, y, z) between the (0,0, 0) of the world relative to the aruco marker. The other measurement are the goal positions. Again place some mark on the ground where you want the goals position to be. Then mesure the distance (x, y, 0) from the goal relative to the world. Once you have all the measurements, then you can go to the `pose_estimation/config` folder and open the `config.yaml` file. There you will find aruco_marker_0: [x, y, z, pitch, roll, yaw] and its where you should set the mesurements for the aruco marker in **meters. (**For the pitch roll and yam follow the instruction on the file)**.**
+On the space/room where you will launch the swarm, you will need to **place the aruco marker in some wall**. You should place it between 30-50 cm above the ground. Once the aruco marker fixed, you should put some mark on the ground where the center of the room is, which will be the coordination (0,0) of the world. Then mesure the distance (x, y, z) between the (0,0, 0) of the world relative to the aruco marker. The other measurement are the goal positions. Again place some mark on the ground where you want the goals position to be. Then mesure the distance (x, y, 0) from the goal relative to the world. Once you have all the measurements, then you can go to the `marker_localisation/config` folder and open the `config.yaml` file. There you will find aruco_marker_0: [x, y, z, pitch, roll, yaw] and its where you should set the mesurements for the aruco marker in **meters. (**For the pitch roll and yam follow the instruction on the file)**.**
 
 For the goals you will need to go to the `tello_formation/launch` folder and open the `static_goals.launch` file and change the distances accordingly, also in **meters** (same as for the aruco marker).
 
@@ -182,7 +198,7 @@ ResultAny=yes
 
 First you will need a switch that has the enough ports to connect all the controllers and the supervisor. then you will connect the both the controllers and the supervisor to the switch via an ethernet cable. If you have set all correctly the controllers and the supervisor should all be connected, and should be able to communicate with each other. To verify that everything works try pinging all the machines. Let's say you want to ping the controller01 from the supervisor. Then on the supervisor you type in the terminal `ping controller01` . You should see something like this:
 
-![Documentation%20c15c243032884df7ab076df52826c868/Untitled.png](Documentation%20c15c243032884df7ab076df52826c868/Untitled.png)
+![BSP-Documentation%20c15c243032884df7ab076df52826c868/Untitled.png](BSP-Documentation%20c15c243032884df7ab076df52826c868/Untitled.png)
 
 If for any reason you are getting a message error, like **host unreachable**, then make sure that the ****step **Setting hostsnames** is correct. If you don't know the hostnames you can check by typing `hostname`. 
 
@@ -190,7 +206,7 @@ If for any reason you are getting a message error, like **host unreachable**, th
 
 ## How the newtork should look like
 
-![Documentation%20c15c243032884df7ab076df52826c868/Untitled%201.png](Documentation%20c15c243032884df7ab076df52826c868/Untitled%201.png)
+![BSP-Documentation%20c15c243032884df7ab076df52826c868/Untitled%201.png](BSP-Documentation%20c15c243032884df7ab076df52826c868/Untitled%201.png)
 
 ---
 
@@ -209,7 +225,7 @@ $ roslaunch tello_formation formation.launch grounded:=false
 ### Launching the aurco_detector.launch
 
 ```bash
-$ roslaunch tello_formation aruco_detector.launch id:=n
+$ roslaunch tello_formation sensors.launch id:=n
 ```
 
 The n will be the number of the drone you have/will launch. For example, if you are launching 3 drones, then you will need to open 3 terminals and insert the command above and change the n to 0, 1 and 2, which correspond to the number of drones.
@@ -240,32 +256,73 @@ On the resources folder you will find rviz_config. Once you are in the rviz you 
     - marker_localization
     - tello_formation
     - tello_ros
-    - tello_slam_ros
 - The simulation folder contains a simulation of what the swarm of drones should be able to do.
     - Inside there lies 2 Python files, [main.py](http://main.py/) and [capt.py](http://capt.py/). [capt.py](http://capt.py/) is the algorithm that computes the trajectories that the drones should do. The [main.py](http://main.py/) is the actual simulation, and you can run it by typing in the terminal the following:
-
+        
         ```bash
         python3 main.py
-
+        
         ```
+        
 
 ## tello_ros package
 
-- This package contains all the Python scripts which (you can find inside the folder *src*) to control the drone and to capture the video.
-    - **tello_client**: this class allows to send and receive the commands to the drone. In essence it is this class which will be communicating with the drones;
-    - **video_stream**: this class captures the video stream from the drone and publishes it;
-    - **camera_info_publisher**: this class contains the parameters of the DJI Tello camera to calibrate the camera to use for the aruco markers and publishes it;
-    - **command_server**: this class is responsible of connecting to the wi-fi of the tellos
+This package contains all the scripts that sends/receives commands from the drone and captures the video.
 
-## tello_formation
+### Source files
 
-- This package contains all the Python scripts (which you can find inside the folder *src*) that runs on the supervisor and controllers. It also contains the script to compute the drones trajectories
-    - **capt**: this class contains the algorithm that computes the trajectories of the drones;
-    - **supervisor**: this class will run on the supervisor and is the one that sends the commands to the controllers;
-    - **controller**: this class will run on the controllers and is the one that communicates with the drones.
+- **tello_client.py:** This script allows to send commands to the Tello drone and receive their answer.
+- **video_stream.py:** This script will retrieve the video from the drone and publish to a ROS topic named `camera/image_raw`.
+- **command_server.py:** This script allows to automatically connect to the drone's WiFi and will send the first commands which allows to communicate with the drone with commands.
+- **camera_info_publisher.py**: This script will take a YML file which contains the different camera parameters and will publish these into a ROS topic named `camera/camera_info`
+- **video_recorder.py**: This script allows to record the video being retrieved from the drone and save it into a .mp4 video file. (useful to create a map for Ucoslam)
 
-## tello_slam_ros
+### Launch files
 
-- This package purpose, is to make possible the communication between ROS and UcoSLAM. This package contains 2 nodes:
-    - **tello_slam_ros_detector_node**: this node is responsible of passing the image frame of the drone to UcoSLAM in order to process it. Once the frame processed, the camera pose will be published to the TF package;
-    - **tello_slam_ros_display_node**: this node purpose is to publish the frame with the keypoints/markers detected drawn in the image. As an option, the a OpenCV window can be enabled, which allows to also see the map being created or see where the pose is within the map.
+- **drone.launch**: This launch file initializes the scripts *command_server*, *video_stream* and *camera_info_publisher*.
+- **prerecord.launch**: This launch file initializes the scripts *command_server* and *video_recorder*. It's purpose is only to record the video being captured from the drone.
+
+## tello_formation package
+
+This package contains the scripts that allows to have the swarm of drones make some task. Currently, the task is to fly to a goal and land.
+
+### Source files
+
+- **capt**: This script is responsible to compute the trajectory for each drone in order to land on a goal. The algorithm tries to choose the closes goal to the drone without any collisions with other drones.
+- **supervisor**: This script is the responsible to send the commands to each controller, that commands a drone.
+- **controller**: This script controls a unique drone and it receives the commands from the supervisor.
+
+### Launch files
+
+- **static_goals.launch**: This launch file will publish the goals coordinates using ros tf2.
+- **single_drone.launch**: This launch file will launch the `drone.launch`(from the tello_ros package). Note that an id (a number) is required. This id is to distiguish the different drones.
+- **formation.launch**: This launch file will initialize all the necessary files to start the swarm.
+- **sensors.launch**: This launch file initializes the tello_slam_ros launch files, also the aruco_eye launch files and the pose_estimation launch files.
+
+## tello_slam_ros package
+
+This package is a ROS wrapper for Ucoslam.
+
+### Source files
+
+- **tello_slam_ros_detector_node.cpp**: This node will retrieve the image from the drone and will pass it to ucoslam. After the image was processed, it publishes the pose of the camera to the TF tree.
+- **tello_slam_ros_display_node.cpp**: This node will retrieve the image from the drone and will publish the image with the key points drawn in the image to a ROS topic named `tello_slam/tello_slam_observation_image/image_raw`
+
+### Launch files
+
+- **tello_slam_ros_detector.launch**: This launch file initializes the tello_slam_ros_detector_node.
+- **tello_slam_ros_display.launch**: This launch file initializes the tello_slam_ros_display_node.
+
+## pose_estimation package
+
+This package creates the required TF frames to localize the drones in the world.
+
+### Source files
+
+- **location_estimation.py**: This scripts creates new TF frames to locate the drones in the world, via the slam thechnology and the aruco_eye software.
+- **static_transform.sh**: This script is just to facilitate the static transforms of the markers.
+
+### Launch files
+
+- **static_markes.launch**: creates a TF frame for each visual marker placed in the world.
+- **naive_estimation.launch**: runs the location_estimation node
