@@ -40,10 +40,12 @@ class TelloController:
 
         with self._mvt_lock:
             rospy.loginfo(f'Received goto {msg.target_frame_id} (t={msg.start}) at {msg.speed} m/s')
+            tf = None
             try:
                 tf = self._buf.lookup_transform(self.name, msg.target_frame_id, msg.start, self.max_localisation_delay)
             except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException) as e:
                 rospy.loginfo(f'Ignoring goto: lookup failed ({e})')
+            
             # Here we could add error checking (check if the transform makes sense)
             x, y = tf.transform.translation.x, tf.transform.translation.y
             speed = max(10, min(100, int(round(msg.speed * 100))))
@@ -61,7 +63,7 @@ class TelloController:
             rospy.sleep(distance / speed + 2)  # +2 to be safe
             self.do(f'land')
             rospy.loginfo('Succeed to land on the goal')
-            rospy.shutdwon()
+            rospy.signal_shutdown('Fininalised the work')
 
     def _search_marker(self):
         """
@@ -72,7 +74,7 @@ class TelloController:
         rospy.sleep(self.max_localisation_delay)  # give more time for start-up
         while not rospy.is_shutdown():
             try:
-                t = self._buf.lookup_transform('world', self.name, rospy.Time(0), self.max_localisation_delay)
+                t = self._buf.lookup_transform(rospy.get_param('world_frame_name', default='world'), self.name, rospy.Time(0), self.max_localisation_delay)
                 rospy.loginfo(f'COORDINATIONS: {t}')
             except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
                 with self._mvt_lock:

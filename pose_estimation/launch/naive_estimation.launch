@@ -1,33 +1,47 @@
 <launch>
+    <arg name="id"/>
+
     <!-- frames -->
     <arg name="world_frame_name" default="world"/>
     <arg name="world_odometry_frame_name" default="world_odometry"/>
-    <arg name="camera_world_frame_name" default="camera_sensor"/>
-    <arg name="camera_world_odometry_frame_name" default="slam_vision"/>
-    <arg name="marker_detected_frame_name" default="visual_marker_detected_"/>
-    <arg name="marker_in_world_frame_name" default="visual_marker_in_world_"/>
-    <arg name="marker_in_world_odometry_frame_name" default="visual_marker_in_world_odometry"/>
-    <arg name="robot_frame_name" default="robot"/>
+    <arg name="camera_world_frame_name" default="camera_in_world"/>
+    <arg name="camera_world_odometry_frame_name" default="camera_in_world_odometry"/>
+    <arg name="marker_detected_frame_name" default="visual_marker_detected_0"/>
+    <arg name="marker_in_world_frame_name" default="visual_marker_in_world_0"/>
+    <arg name="marker_in_world_odometry_frame_name" default="visual_marker_in_world_odometry_0"/>
+    <arg name="robot_frame_name" default="tello_$(arg id)"/>
     
     <arg name="pi" value="3.141592653589793"/>
+
     <!-- Offset from the camera to the middle of the drone (mesured) -->
-    <arg name="detector_offset" default="$(eval ' '.join(map(str, [0.04, 0, 0, -pi/2, 0, -pi/2])))"/>
+    <arg name="detector_offset" default="$(eval ' '.join(map(str, [0.04, 0, 0, 0, 0, 0])))"/>
 
     <arg name="marker_count" default="1"/>
 
-
     <!-- static transform from the camera to the middle of the drone -->
     <node pkg="tf2_ros" name="camera_offset" type="static_transform_publisher"
-        args="$(arg detector_offset) $(arg robot_frame_name) $(arg camera_world_frame_name)"/>
+        args="$(arg detector_offset) $(arg robot_frame_name) $(arg camera_world_frame_name)_$(arg id)"/>
     
     <node pkg="pose_estimation" name="drone_location_estimation" type="location_estimation.py"> 
         <param name="world_frame_name" value="$(arg world_frame_name)" type="string" />
         <param name="world_odometry_frame_name" value="$(arg world_odometry_frame_name)" type="string" />
-        <param name="camera_world_frame_name" value="$(arg camera_world_frame_name)" type="string" />
-        <param name="camera_world_odometry_frame_name" value="$(arg camera_world_odometry_frame_name)" type="string" />
-        <param name="marker_detected_frame_name" value="$(arg marker_detected_frame_name)" type="string" />
-        <param name="marker_in_world_frame_name" value="$(arg marker_in_world_frame_name)" type="string" />
-        <param name="marker_in_world_odometry_frame_name" value="$(arg marker_in_world_odometry_frame_name)" type="string" />
+        <param name="camera_world_frame_name" value="$(arg camera_world_frame_name)_$(arg id)" type="string" />
+        <param name="camera_world_odometry_frame_name" value="$(arg camera_world_odometry_frame_name)_$(arg id)" type="string" />
+        <param name="marker_detected_frame_name" value="$(arg marker_detected_frame_name)_0" type="string" />
+        <param name="marker_in_world_frame_name" value="$(arg marker_in_world_frame_name)_0" type="string" />
+        <param name="marker_in_world_odometry_frame_name" value="$(arg marker_in_world_odometry_frame_name)_0" type="string" />
         <param name="robot_frame_name" value="$(arg robot_frame_name)" type="string" />
+        
     </node>
+    <!-- 
+    <node if="$(eval marker_count > 1)" pkg="pose_estimation" name="drone_location_estimation" type="location_estimation.py" args="-id $(arg id)"> 
+        <param name="world_frame_name" value="$(arg world_frame_name)" type="string" />
+        <param name="world_odometry_frame_name" value="$(arg world_odometry_frame_name)" type="string" />
+        <param name="camera_world_frame_name" value="$(arg camera_world_frame_name)_$(arg id)" type="string" />
+        <param name="camera_world_odometry_frame_name" value="$(arg camera_world_odometry_frame_name)_$(arg id)" type="string" />
+        <param name="marker_detected_frame_name" value="$(arg marker_detected_frame_name)_1" type="string" />
+        <param name="marker_in_world_frame_name" value="$(arg marker_in_world_frame_name)_1" type="string" />
+        <param name="marker_in_world_odometry_frame_name" value="$(arg marker_in_world_odometry_frame_name)_1" type="string" />
+        <param name="robot_frame_name" value="$(arg robot_frame_name)" type="string" />
+    </node> -->
 </launch>

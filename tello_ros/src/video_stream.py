@@ -76,8 +76,8 @@ def publish(client, verbose=False, rate=30):
         img_msg = ros_numpy.msgify(Image, frame, encoding='rgb8')
         img_msg.header.stamp = rospy.Time.now()
         publisher.publish(img_msg)
-        if VERBOSE:
-            rospy.loginfo("Published video frame")
+        #if VERBOSE:
+        #    rospy.loginfo("Published video frame")
         rate.sleep()
     client.stop()
 

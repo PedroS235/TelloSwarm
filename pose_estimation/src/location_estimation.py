@@ -7,6 +7,7 @@ from numpy.lib.financial import rate
 # - ROS
 import rospy
 import ros_numpy as ros_np
+from rospy.core import parse_rosrpc_uri, rospydebug
 
 # - TF
 import tf2_ros
@@ -38,6 +39,8 @@ from geometry_msgs.msg import TransformStamped, Transform
 [Note]: Cwo=Cw and VMd=VMwo=VMw (To be able to have a correct TF TREE!)
 """
 
+W_to_WO_known = False
+
 def marker_detection(buffer, rate, broadcaster, static_broadcaster, tf_frames):
     """
         @params:
@@ -47,12 +50,24 @@ def marker_detection(buffer, rate, broadcaster, static_broadcaster, tf_frames):
             - static_broadcaster: used to make the transfrom between the world and world odometry
             - tf_frames: a dictionary with all the names of the tf frames
     """
+    global W_to_WO_known
 
     try: 
         Pwo_vm = get_transform_in_np_array(buffer, tf_frames.get('WO'), tf_frames.get('VMd')) 
         Pw_vmw = get_transform_in_np_array(buffer, tf_frames.get('W'), tf_frames.get('VMw'))
+
+        # - Computation Pw_wo = Pw_vmw - Pwo_vm
         Pw_wo = np.dot(Pw_vmw, np.linalg.inv(Pwo_vm))
 
+        transformStamped = TransformStamped(transform = ros_np.msgify(Transform, Pwo_vm))
+        transformStamped.header.stamp = rospy.Time.now()
+        transformStamped.header.frame_id = tf_frames.get('WO')
+        transformStamped.child_frame_id = tf_frames.get('VMwo')
+
+        static_broadcaster.sendTransform(transformStamped)
+
+
+        #if not W_to_WO_known:
         transformStamped = TransformStamped(transform = ros_np.msgify(Transform, Pw_wo))
         transformStamped.header.stamp = rospy.Time.now()
         transformStamped.header.frame_id = tf_frames.get('W')
@@ -60,16 +75,11 @@ def marker_detection(buffer, rate, broadcaster, static_broadcaster, tf_frames):
 
         static_broadcaster.sendTransform(transformStamped)
 
-        transformStamped = TransformStamped(transform = ros_np.msgify(Transform, Pwo_vm))
-        transformStamped.header.stamp = rospy.Time.now()
-        transformStamped.header.frame_id = tf_frames.get('WO')
-        transformStamped.child_frame_id = tf_frames.get('VMwo')
 
-        broadcaster.sendTransform(transformStamped)
+        W_to_WO_known = True
 
     except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-        rate.sleep()
-
+        return
 
 def robot_estimation(buffer, rate, broadcaster, tf_frames):
     """
@@ -84,6 +94,9 @@ def robot_estimation(buffer, rate, broadcaster, tf_frames):
         Pwo_cwo = get_transform_in_np_array(buffer, tf_frames.get('WO'), tf_frames.get('Cwo'))
         Pr_cw = get_transform_in_np_array(buffer, tf_frames.get('R'), tf_frames.get('Cw'))
         Pw_cw = get_transform_in_np_array(buffer, tf_frames.get('W'), tf_frames.get('WO'))
+
+
+        # - Computation Pw_r = (Pw_cw + Pwo_cwo) - Pr_cw
         Pw_r = np.dot(np.dot(Pw_cw, Pwo_cwo), np.linalg.inv(Pr_cw))
 
         transformStamped = TransformStamped(transform = ros_np.msgify(Transform, Pw_r))
@@ -94,7 +107,7 @@ def robot_estimation(buffer, rate, broadcaster, tf_frames):
         broadcaster.sendTransform(transformStamped)
 
     except (tf2_ros.LookupException, tf2_ros.ConnectivityException, tf2_ros.ExtrapolationException):
-        rate.sleep()
+        return
 
 def get_transform_in_np_array(buffer, parent, child):
     """
@@ -108,14 +121,15 @@ def get_transform_in_np_array(buffer, parent, child):
     return np.array(ros_np.numpify(buffer.lookup_transform(parent, child, rospy.Time()).transform))
 
 def get_tf_frames_from_params():
-    W = rospy.get_param('world_frame_name', default='W')
-    WO = rospy.get_param('world_odometry_frame_name', default='WO')
-    Cw = rospy.get_param('camera_world_frame_name', default='Cw')
-    Cwo = rospy.get_param('camera_world_odometry_frame_name', default='Cwo')
-    VMd = rospy.get_param('marker_detected_frame_name', default='VMd_0')
-    VMw = rospy.get_param('marker_in_world_frame_name', default='VMw_0')
-    VMwo = rospy.get_param('marker_in_world_odometry_frame_name', default='VMwo_0')
-    R = rospy.get_param('robot_frame_name', default='R')
+    W = rospy.get_param('world_frame_name', default='world')
+    WO = rospy.get_param('world_odometry_frame_name', default='world_odometry')
+    Cw = rospy.get_param('camera_world_frame_name', default='camera_in_world_0')
+    Cwo = rospy.get_param('camera_world_odometry_frame_name', default='camera_in_world_odometry_0')
+    VMd = rospy.get_param('marker_detected_frame_name', default='visual_marker_detected_0')
+    VMw = rospy.get_param('marker_in_world_frame_name', default='visual_marker_in_world_0')
+    VMwo = rospy.get_param('marker_in_world_odometry_frame_name', default='visual_marker_in_world_odometry_0')
+    R = rospy.get_param('robot_frame_name', default=f'tello_0')
+
     frames = {
         'W': W,
         'WO': WO,
@@ -142,7 +156,8 @@ def main():
     rate = rospy.Rate(10.0)
 
     while not rospy.is_shutdown():
-        marker_detection(buffer, rate, broadcaster, static_broadcaster, tf_frames)
+        if not W_to_WO_known:
+            marker_detection(buffer, rate, broadcaster, static_broadcaster, tf_frames)
         robot_estimation(buffer, rate, broadcaster, tf_frames)
         rate.sleep()
 

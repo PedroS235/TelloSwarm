@@ -26,7 +26,7 @@ class TelloClientROS(TelloClient):
         while not rospy.is_shutdown():
             ret = subprocess.call(['nmcli', 'c', 'up', 'tello01']) #edit here the name of the Tello wifi name (tello01=name)
             if int(ret) == 0:
-                self.logger('Connected to Tello wifi')
+                #self.logger('Connected to Tello wifi')
                 break
             rospy.sleep(0.5)
         super(TelloClientROS, self).start()

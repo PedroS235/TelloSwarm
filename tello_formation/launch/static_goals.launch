@@ -1,12 +1,12 @@
 <launch>
     <arg name="world" default="world"/>
     <arg name="goal_base_name" default="goal_"/>
-    <arg name="goal_count" default="3"/>
+    <arg name="goal_count" default="1"/>
 
     <arg name="pi" value="3.141592653589793"/>
 
     <!-- Pass goal pose in world as "x y z yaw pitch roll" -->
-    <arg name="goal_0" default="$(eval ' '.join(map(str, [-1.8, 1.4, 0, 0, 0, 0])))"/>
+    <arg name="goal_0" default="$(eval ' '.join(map(str, [0, 1, 0, 0, 0, 0])))"/>
     <arg name="goal_1" default="$(eval ' '.join(map(str, [0.85, -1.42, 0, 0, 0, 0])))"/>
     <arg name="goal_2" default="$(eval ' '.join(map(str, [0, -1.42, 0, 0, 0, 0])))"/>
     <arg name="goal_3" default="$(eval ' '.join(map(str, [0, 0, 0, 0, 0, 0])))"/>

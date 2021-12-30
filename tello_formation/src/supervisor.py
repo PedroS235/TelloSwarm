@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 
-
 import numpy as np
 
 import rospy
@@ -73,17 +72,17 @@ class Supervisor(object):
         self.set_marker_search(True)
         while not rospy.is_shutdown():
             try:
-                start = rospy.Time(0)
+                start = rospy.Time().now()
                 self.solver.clear()
                 starts = []  # we need to remember starting locations when m < n (i.e. don't move)
                 for i in range(self.n):
-                    t = self.buf.lookup_transform('world', f'tello_{i}', start, self.max_localisation_delay)
+                    t = self.buf.lookup_transform(rospy.get_param('world_frame_name', default='world'), f'tello_{i}', start, self.max_localisation_delay)
                     pos = self.getpos(t.transform)
                     self.solver.add_start(pos)
                     starts.append(t)
                 goals = []
                 for j in range(self.m):
-                    t = self.buf.lookup_transform('world', f'goal_{j}', start, self.max_localisation_delay)
+                    t = self.buf.lookup_transform(rospy.get_param('world_frame_name', default='world'), f'goal_{j}', start, self.max_localisation_delay)
                     pos = self.getpos(t.transform)
                     self.solver.add_goal(pos)
                     goals.append(t)

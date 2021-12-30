@@ -17,7 +17,7 @@ def publisher(camera_info):
 
     while not rospy.is_shutdown():
         publisher_node.publish(camera_info)
-        rospy.loginfo("Parameters published")
+        #rospy.loginfo("Parameters published")
         rate.sleep()
 
 
