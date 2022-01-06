@@ -27,6 +27,7 @@ int TelloSlamRos::openRos(){
 
     // - Image subscriber
     imageSub = imageTransport -> subscribe(imageTopicName, 1, &TelloSlamRos::imageCallback, this);
+    outputImagePub = imageTransport -> advertise(outputImageTopicName, 1);
     return 0;
 }
 
@@ -51,6 +52,9 @@ void TelloSlamRos::readParameters(){
 
     ros::param::param<std::string>("~camera_info_topic_name", cameraInfoTopicName, "camera/camera_info");
     std::cout << " -> Camera info topic name: " << cameraInfoTopicName << std::endl;
+    
+    ros::param::param<std::string>("~output_image_topic_name", outputImageTopicName, "tello_slam/tello_slam_observation_image/image_raw");
+    std::cout << " -> Outpuc image topic name: " << outputImageTopicName << std::endl;
 
     // - Ucoslam params
     ros::param::param<bool>("~run_sequential", runSequential, true);
@@ -90,28 +94,32 @@ void TelloSlamRos::readParameters(){
 }
 
 void TelloSlamRos::cameraInfoCallback(const sensor_msgs::CameraInfo &msg){
-    cv::Size camSize(msg.width, msg.height);
-    cv::Mat cameraMatrix(3, 3, CV_32FC1);
-    cv::Mat distortionCoefficients(5, 1, CV_32FC1);
+    if(cameraInfoReceived){
+        std::cout << "cameraInfoCallback Executed" << std::endl;
+        cv::Size camSize(msg.width, msg.height);
+        cv::Mat cameraMatrix(3, 3, CV_32FC1);
+        cv::Mat distortionCoefficients(5, 1, CV_32FC1);
 
-    // - Camera matrix
-    for(int col = 0; col<msg.K.size(); ++col)
-        cameraMatrix.at<float>(col%3, col-(col%3)*3) = msg.K[col];
-    
-    // - Distortion coefficient matrix
-    for(int col = 0; col<msg.K.size(); ++col)
-        distortionCoefficients.at<float>(col, 0) = msg.D[col];
-    ucoslamCameraParams.CamSize = camSize;
-    ucoslamCameraParams.CameraMatrix = cameraMatrix;
-    ucoslamCameraParams.Distorsion = distortionCoefficients;
-    cameraInfoSub.shutdown();
-    cameraInfoReceived = true;
+        // - Camera matrix
+        for(int col = 0; col<msg.K.size(); ++col)
+            cameraMatrix.at<float>(col%3, col-(col%3)*3) = msg.K[col];
+        
+        // - Distortion coefficient matrix
+        for(int col = 0; col<msg.K.size(); ++col)
+            distortionCoefficients.at<float>(col, 0) = msg.D[col];
+        ucoslamCameraParams.CamSize = camSize;
+        ucoslamCameraParams.CameraMatrix = cameraMatrix;
+        ucoslamCameraParams.Distorsion = distortionCoefficients;
+        cameraInfoSub.shutdown();
+        cameraInfoReceived = true;
 
-    std::cout << "[INFO] - Camera calibration parameters received" << std::endl;
+        std::cout << "[INFO] - Camera calibration parameters received" << std::endl;
+    }
 }
 
 void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
     if(cameraInfoReceived){
+        std::cout << "imageCallback Executed" << std::endl;
         // - Transform image to OpenCV compatible
         try{
             cvImage = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8); 
@@ -136,6 +144,7 @@ void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
             transformedStamped.transform = cameraPose2Tf();
             tfTransformBroadcaster -> sendTransform(transformedStamped);
         }
+        outputImagePub.publish(cvImage -> toImageMsg());
     }
 }
 
@@ -158,8 +167,10 @@ geometry_msgs::Transform TelloSlamRos::cameraPose2Tf(){
 
 void TelloSlamRos::configureUcoslam(){
     // - Load camera parameters by a file
-    if(cameraCalibrationFileName != "")
+    if(cameraCalibrationFileName != ""){
         ucoslamCameraParams.readFromXMLFile(cameraCalibrationFileName);
+        cameraInfoReceived = true;
+    }
 
     // -= Load the world map
     if(inputWorldMapFileName != ""){

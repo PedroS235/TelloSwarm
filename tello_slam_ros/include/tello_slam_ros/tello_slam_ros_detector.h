@@ -45,6 +45,12 @@ protected:
     ros::Subscriber cameraInfoSub;
     void cameraInfoCallback(const sensor_msgs::CameraInfo &msg);
 
+// - Images output
+protected:
+    std::string outputImageTopicName;
+    cv::Mat outputImageMat;
+    image_transport::Publisher outputImagePub;
+
 protected:
     bool runSequential;
     bool detectMarkers;
