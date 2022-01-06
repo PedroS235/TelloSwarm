@@ -12,7 +12,7 @@
 
     <arg name="run_sequential" default="False"/> 
     <arg name="detect_markers" default="True"/>
-    <arg name="arudo_id_global_reference" default="0"/>
+    <arg name="arudo_id_global_reference" default="2"/>
 
     <arg name="tello_slam_detector_frame_name" default="slam_detector"/>
     <arg name="tello_slam_detector_child_frame_name" default="slam_vision"/>
