@@ -14,7 +14,7 @@
     <arg name="pi" value="3.141592653589793"/>
 
     <!-- Offset from the camera to the middle of the drone (mesured) -->
-    <arg name="detector_offset" default="$(eval ' '.join(map(str, [0.04, 0, 0, 0, 0, 0])))"/>
+    <arg name="detector_offset" default="$(eval ' '.join(map(str, [0.04, 0, 0, -pi/2, 0, -pi/2])))"/>
 
     <arg name="marker_count" default="1"/>
 

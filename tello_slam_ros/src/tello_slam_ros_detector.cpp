@@ -94,7 +94,7 @@ void TelloSlamRos::readParameters(){
 }
 
 void TelloSlamRos::cameraInfoCallback(const sensor_msgs::CameraInfo &msg){
-    if(cameraInfoReceived){
+    if(!cameraInfoReceived){
         std::cout << "cameraInfoCallback Executed" << std::endl;
         cv::Size camSize(msg.width, msg.height);
         cv::Mat cameraMatrix(3, 3, CV_32FC1);
@@ -131,7 +131,7 @@ void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
         imageMat = cvImage -> image;
         
         // - Calling UcoSLAM
-        cameraPose = ucoslam.process(imageMat, ucoslamCameraParams, frameNumber);
+        cameraPose = ucoslam.process(cvImage -> image, ucoslamCameraParams, frameNumber);
         frameNumber++;
 
         // - Send the pose to TF2

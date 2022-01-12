@@ -11,7 +11,7 @@ maxFeatures: 4000
 nthreads_feature_detector: 2
 nOctaveLevels: 8
 scaleFactor: 1.2000000476837158e+00
-runSequential: 0
+runSequential: 1
 detectMarkers: 1
 forceInitializationFromMarkers: 0
 aruco_allowOneFrameInitialization: 0

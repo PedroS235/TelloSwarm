@@ -1,6 +1,6 @@
 <launch>
     <arg name="tello_count" default="1"/>
-    <arg name="goal_count" default="3"/>
+    <arg name="goal_count" default="2"/>
     <arg name="marker_count" default="1"/>
 
      
