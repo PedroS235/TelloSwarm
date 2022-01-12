@@ -119,7 +119,6 @@ void TelloSlamRos::cameraInfoCallback(const sensor_msgs::CameraInfo &msg){
 
 void TelloSlamRos::imageCallback(const sensor_msgs::ImageConstPtr& msg){
     if(cameraInfoReceived){
-        std::cout << "imageCallback Executed" << std::endl;
         // - Transform image to OpenCV compatible
         try{
             cvImage = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8); 
