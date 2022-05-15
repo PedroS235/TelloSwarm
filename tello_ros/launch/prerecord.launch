@@ -1,0 +1,6 @@
+<launch>
+    <arg name="grounded" default="true"/>
+
+    <node pkg="tello_ros" name="command_srv" type="command_server.py" args="$(eval '' if grounded else '--takeoff')"/> 
+    <node pkg="tello_ros" name="video" type="video_recorder.py" args="$(find tello_ros)/recordings/mapping.mp4" />
+</launch>

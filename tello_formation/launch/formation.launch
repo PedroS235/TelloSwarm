@@ -1,0 +1,19 @@
+<launch>
+    <arg name="tello_count" default="1"/>
+    <arg name="goal_count" default="2"/>
+    <arg name="marker_count" default="1"/>
+
+     
+    <include file="$(find pose_estimation)/launch/static_markers.launch">
+        <arg name="marker_count" value="$(arg marker_count)"/>
+    </include>
+
+    <include file="$(find tello_formation)/launch/static_goals.launch">
+        <arg name="goal_count" value="$(arg goal_count)"/>
+    </include>
+
+    <node pkg="tello_formation" name="supervisor" type="supervisor.py"
+        args="-n $(arg tello_count) -m $(arg goal_count)"/>
+
+    <node pkg="rviz" name="rviz" type="rviz" args="-d $(find tello_formation)/rviz/config.rviz"/>
+</launch>

@@ -1,0 +1,32 @@
+<launch>
+    <!-- ID of the drone -->
+    <arg name="id"/>
+
+    <group ns="tello_$(arg id)">
+
+        <!-- Tello slam launch files -->
+        <include file="$(find tello_slam_ros)/launch/tello_slam_ros_detector.launch">
+            <arg name="tello_slam_detector_frame_name" value="world_odometry"/>
+            <arg name="tello_slam_detector_child_frame_name" value="camera_in_world_odometry_$(arg id)"/>
+        </include>
+
+        <!-- 
+        <include file="$(find tello_slam_ros)/launch/tello_slam_ros_display.launch">
+            <arg name="show_display" value="false"/>
+        </include>
+-->
+        <!-- Aruco_eye launch files -->
+        <include file="$(find aruco_eye_ros)/launch/aruco_eye_ros_detector.launch">
+            <arg name="aruco_detector_frame_name" value="camera_in_world_odometry_$(arg id)"/>
+            <arg name="aruco_marker_child_base_name" value="visual_marker_detected_"/>
+        </include>
+
+        <include file="$(find aruco_eye_ros)/launch/aruco_eye_ros_display.launch">
+            <arg name="flag_display_output_image" value="false"/>
+        </include>
+        <!-- Pose estimation -->
+        <include file="$(find pose_estimation)/launch/naive_estimation.launch">
+            <arg name="id" value="$(arg id)"/>
+        </include>
+    </group>
+</launch>

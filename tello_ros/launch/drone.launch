@@ -1,0 +1,8 @@
+<launch>
+    <arg name="grounded" default="true"/>
+    <arg name="camera_info_file_name" default="$(find tello_slam_ros)/config/tello_camera_calib.yml"/>
+
+    <node pkg="tello_ros" name="calib" type="camera_info_publisher.py" args="-f $(arg camera_info_file_name)"/>
+    <node pkg="tello_ros" name="video" type="video_stream.py"/>
+    <node pkg="tello_ros" name="command_srv" type="command_server.py" args="$(eval '' if grounded else '--takeoff')"/> 
+</launch>

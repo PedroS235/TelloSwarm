@@ -1,0 +1,37 @@
+<launch>
+    <arg name="tello_slam_display_node_name" default="tello_slam_display_node"/>
+    <arg name="show_display" default="True"/>
+
+    <arg name="camera_image_topic_name" default="camera/camera_info"/>
+    <arg name="image_topic_name" default="camera/image_raw"/>
+    <arg name="output_image_topic_name" default="tello_slam/tello_slam_observation_image/image_raw" />
+
+    <arg name="run_sequential" default="False"/>
+    <arg name="detect_markers" default="True"/>
+    <arg name="arudo_id_global_reference" default="0"/>
+
+    <arg name="camera_calibration_file_name" default=""/>
+    <arg name="vocabulary_file_name" default="$(find tello_slam_ros)/config/vocab.fbow"/>
+    <arg name="input_world_map_file_name" default="$(find tello_slam_ros)/config/world.map"/>
+    <arg name="output_world_map_file_name" default="$(find tello_slam_ros)/config/output_map.map"/>
+    <arg name="params_file_name" default="$(find tello_slam_ros)/config/params.yml"/>
+
+    <node name="$(arg tello_slam_display_node_name)" pkg="tello_slam_ros" type="tello_slam_ros_display" output="screen">
+        <param name="show_display" value="$(arg show_display)" type="Boolean" />
+
+        <param name="image_topic_name" value="$(arg image_topic_name)" type="string"/>
+        <param name="output_image_topic_name" value="$(arg output_image_topic_name)" type="string" />
+        <param name="camera_image_topic_name" value="$(arg camera_image_topic_name)" type="string" />
+
+        <param name="run_sequntial" value="$(arg run_sequential)" type="Boolean" />
+        <param name="detect_markers" value="$(arg detect_markers)" type="Boolean" />
+        <param name="arudo_id_global_reference" value="$(arg arudo_id_global_reference)" type="int" />
+
+        <param name="camera_calibration_file_name" value="$(arg camera_calibration_file_name)" type="string" />
+        <param name="vocabulary_file_name" value="$(arg vocabulary_file_name)" type="string" />
+        <param name="input_world_map_file_name" value="$(arg input_world_map_file_name)" type="string" />
+        <param name="output_world_map_file_name" value="$(arg output_world_map_file_name)" type="string" />
+        <param name="params_file_name" value="$(arg params_file_name)" type="string" />
+
+    </node>
+</launch>

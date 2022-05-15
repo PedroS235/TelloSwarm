@@ -1,0 +1,16 @@
+<launch>
+    <arg name="id"/>
+    <arg name="grounded" default="true"/>
+
+    <group ns="tello_$(arg id)">
+
+        <include file="$(find tello_ros)/launch/drone.launch">
+            <arg name="grounded" value="$(arg grounded)"/>
+        </include>
+
+
+        <param name="search_marker_enabled" value="true"/> 
+        <node pkg="tello_formation" name="controller" type="controller.py" args="--id $(arg id)"/> 
+
+    </group>
+</launch>

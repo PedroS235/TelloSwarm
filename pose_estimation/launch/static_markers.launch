@@ -1,0 +1,20 @@
+<launch>
+    <!-- frames -->
+    <arg name="world" default="world"/>
+    <arg name="marker_base_name" default="visual_marker_in_world_"/>
+
+    <arg name="marker_count" default="1"/>
+
+    <arg name="config" default="config.yaml"/>
+
+    <rosparam file="$(find pose_estimation)/config/$(arg config)"/>
+
+    <!-- static marker transforms -->
+    <node if="$(eval marker_count > 0)" pkg="pose_estimation" name="$(arg marker_base_name)0" type="static_transform.sh"
+        args="pose_estimation/markers/$(arg marker_base_name)0 $(arg world) $(arg marker_base_name)0"/>
+    <node if="$(eval marker_count > 1)" pkg="pose_estimation" name="$(arg marker_base_name)1_in_$(arg world)" type="static_transform.sh"
+        args="pose_estimation/markers/$(arg marker_base_name)1 $(arg world) $(arg marker_base_name)1"/>
+    <node if="$(eval marker_count > 2)" pkg="pose_estimation" name="$(arg marker_base_name)2_in_$(arg world)" type="static_transform.sh"
+        args="pose_estimation/markers/$(arg marker_base_name)2 $(arg world) $(arg marker_base_name)2"/>
+
+</launch>

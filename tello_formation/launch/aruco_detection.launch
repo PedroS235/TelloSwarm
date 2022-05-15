@@ -1,0 +1,22 @@
+<launch>
+  <arg name="id" default="0"/>
+  <arg name="marker_count" default="1"/>
+
+    <group ns="tello_$(arg id)">
+        <include file="$(find pose_estimation)/launch/naive_estimation.launch">
+            <arg name="estimated_marker_base_name" value="est_by_$(arg id)_aruco_marker_"/>
+            <arg name="detector" value="aruco_detector_$(arg id)"/>
+            <arg name="robot" value="tello_$(arg id)"/>
+            <arg name="marker_count" value="$(arg marker_count)"/>
+        </include>
+        
+        <include file="$(find aruco_eye_ros)/launch/aruco_eye_ros_detector.launch">
+            <arg name="aruco_marker_child_base_name" value="est_by_$(arg id)_aruco_marker_"/>
+            <arg name="aruco_detector_frame_name" value="aruco_detector_$(arg id)"/>
+        </include>
+
+        <include file="$(find aruco_eye_ros)/launch/aruco_eye_ros_display.launch">
+            <arg name="flag_display_output_image" value="false"/>
+        </include>
+    </group>
+</launch>
